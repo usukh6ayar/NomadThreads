@@ -9,10 +9,9 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Pressable,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 // Mock data for the products
 const PRODUCTS = [
@@ -24,6 +23,7 @@ const PRODUCTS = [
     colors: ["#000", "#69445c", "#d4915d", "#fff"],
     images: ["../../assets/deel1.png"],
     description: "Үндэсний хээтэй, уламжлалт загвар. Торгон материал.",
+    category: "deel",
   },
   {
     id: "2",
@@ -33,6 +33,7 @@ const PRODUCTS = [
     colors: ["#000", "#392f54", "#724b3d"],
     images: ["../../assets/deel2.png"],
     description: "Хөвсгөл нутгийн уламжлалт загвар.",
+    category: "deel",
   },
   {
     id: "3",
@@ -42,6 +43,7 @@ const PRODUCTS = [
     colors: ["#000", "#392f54"],
     images: ["../../assets/boots.png"],
     description: "Гар аргаар урласан, жинхэнэ арьсан монгол гутал.",
+    category: "boots",
   },
   {
     id: "4",
@@ -50,14 +52,26 @@ const PRODUCTS = [
     colors: ["#000", "#69445c", "#d4915d"],
     images: ["../../assets/toy.png"],
     description: "Монгол уламжлалт тоглоом.",
+    category: "toy",
   },
+];
+
+const CATEGORIES = [
+  { id: "all", name: "Бүгд" },
+  { id: "deel", name: "Дээл" },
+  { id: "boots", name: "Гутал" },
+  { id: "accessories", name: "Гоёл" },
+  { id: "toy", name: "Тоглоом" },
 ];
 
 export default function ShopScreen() {
   const router = useRouter();
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  const filteredProducts =
+    activeCategory === "all"
+      ? PRODUCTS
+      : PRODUCTS.filter((product) => product.category === activeCategory);
 
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
@@ -71,7 +85,7 @@ export default function ShopScreen() {
           resizeMode="cover"
         />
         <TouchableOpacity style={styles.favoriteButton}>
-          <AntDesign name="hearto" size={20} color="black" />
+          <Ionicons name="heart-outline" size={20} color="black" />
         </TouchableOpacity>
       </View>
       <Text style={styles.productName}>{item.name}</Text>
@@ -83,70 +97,130 @@ export default function ShopScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity>
-          <Ionicons name="search" size={24} color="black" />
+          <Ionicons name="search-outline" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Худалдан авах</Text>
         <TouchableOpacity onPress={() => router.push("/shop/favorites")}>
-          <Feather name="heart" size={24} color="black" />
+          <Ionicons name="heart-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.categoryContainer}>
-          <Text style={styles.sectionTitle}>Төрөл сонгох</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.categoriesScroll}
-          >
+      <View style={styles.categoryContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoriesScroll}
+        >
+          {CATEGORIES.map((category) => (
             <TouchableOpacity
-              style={[styles.categoryButton, styles.activeCategory]}
+              key={category.id}
+              style={[
+                styles.categoryButton,
+                activeCategory === category.id && styles.activeCategory,
+              ]}
+              onPress={() => setActiveCategory(category.id)}
             >
-              <Text style={styles.activeCategoryText}>Бүгд</Text>
+              <Text
+                style={[
+                  styles.categoryText,
+                  activeCategory === category.id && styles.activeCategoryText,
+                ]}
+              >
+                {category.name}
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.categoryButton}>
-              <Text style={styles.categoryText}>Дээл</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.categoryButton}>
-              <Text style={styles.categoryText}>Гутал</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.categoryButton}>
-              <Text style={styles.categoryText}>Гоёл</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.categoryButton}>
-              <Text style={styles.categoryText}>Тоглоом</Text>
-            </TouchableOpacity>
-          </ScrollView>
+          ))}
+        </ScrollView>
+      </View>
+
+      <View style={styles.brandsSection}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Брэндүүд</Text>
+          <TouchableOpacity onPress={() => router.push("/brands")}>
+            <Text style={styles.seeAllText}>Бүгдийг харах</Text>
+          </TouchableOpacity>
         </View>
 
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.brandsScroll}
+        >
+          <TouchableOpacity
+            style={styles.brandItem}
+            onPress={() => router.push("/brands/borgolj")}
+          >
+            <View style={styles.brandCircle}>
+              <Text style={styles.brandInitial}>Б</Text>
+            </View>
+            <Text style={styles.brandName}>Бөргөлжин</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.brandItem}
+            onPress={() => router.push("/brands/zaya")}
+          >
+            <View style={styles.brandCircle}>
+              <Text style={styles.brandInitial}>З</Text>
+            </View>
+            <Text style={styles.brandName}>Заяа</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.brandItem}
+            onPress={() => router.push("/brands")}
+          >
+            <View style={styles.brandCircle}>
+              <Text style={styles.brandInitial}>М</Text>
+            </View>
+            <Text style={styles.brandName}>Мөнхжин</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.brandItem}
+            onPress={() => router.push("/brands")}
+          >
+            <View style={styles.brandCircle}>
+              <Text style={styles.brandInitial}>Г</Text>
+            </View>
+            <Text style={styles.brandName}>Говь</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+
+      <ScrollView style={styles.scrollView}>
         <Text style={styles.sectionTitle}>Бүтээгдэхүүн</Text>
         <FlatList
-          data={PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProductItem}
           keyExtractor={(item) => item.id}
           numColumns={2}
           scrollEnabled={false}
+          contentContainerStyle={styles.productsContainer}
         />
       </ScrollView>
 
       <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem}>
-          <Feather name="home" size={24} color="#999" />
-          <Text style={styles.tabText}>Нүүр</Text>
-        </TouchableOpacity>
         <TouchableOpacity style={[styles.tabItem, styles.activeTab]}>
-          <Feather name="shopping-bag" size={24} color="#F2994A" />
-          <Text style={styles.activeTabText}>Дэлгүүр</Text>
+          <Ionicons name="home" size={24} color="#F2994A" />
+          <Text style={styles.activeTabText}>Нүүр</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => router.push("/brands")}
+        >
+          <Ionicons name="shopping-bag-outline" size={24} color="#999" />
+          <Text style={styles.tabText}>Дэлгүүр</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem}>
-          <Feather name="map-pin" size={24} color="#999" />
-          <Text style={styles.tabText}>Газрын зураг</Text>
+          <Ionicons name="grid-outline" size={24} color="#999" />
+          <Text style={styles.tabText}>Ангилал</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.tabItem}
           onPress={() => router.push("/settings")}
         >
-          <Feather name="user" size={24} color="#999" />
+          <Ionicons name="person-outline" size={24} color="#999" />
           <Text style={styles.tabText}>Профайл</Text>
         </TouchableOpacity>
       </View>
@@ -175,13 +249,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryContainer: {
-    marginVertical: 15,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginHorizontal: 15,
-    marginBottom: 10,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
   },
   categoriesScroll: {
     paddingHorizontal: 10,
@@ -202,6 +272,58 @@ const styles = StyleSheet.create({
   activeCategoryText: {
     color: "#FFF",
     fontWeight: "bold",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginHorizontal: 15,
+    marginVertical: 10,
+  },
+  seeAllText: {
+    color: "#F2994A",
+    fontWeight: "500",
+  },
+  brandsSection: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEEEEE",
+  },
+  brandsScroll: {
+    paddingHorizontal: 10,
+  },
+  brandItem: {
+    alignItems: "center",
+    marginHorizontal: 15,
+    width: 60,
+  },
+  brandCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#E0E0E0",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  brandInitial: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  brandName: {
+    fontSize: 12,
+    textAlign: "center",
+  },
+  productsContainer: {
+    paddingHorizontal: 7,
+    paddingBottom: 20,
   },
   productCard: {
     flex: 1,
