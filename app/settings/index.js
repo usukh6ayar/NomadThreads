@@ -84,7 +84,7 @@ export default function ProfileScreen() {
         <View style={styles.profileSection}>
           <View style={styles.profileImageContainer}>
             <Image
-              source={require("../../assets/deel-cover.png")}
+              source={require("../../assets/profile.png")}
               style={styles.profileImage}
               resizeMode="cover"
             />
@@ -92,8 +92,8 @@ export default function ProfileScreen() {
               <Ionicons name="pencil" size={16} color="white" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.profileName}>Anujin Bat</Text>
-          <Text style={styles.profileUsername}>@anujinbat3</Text>
+          <Text style={styles.profileName}>Usukhbayar</Text>
+          <Text style={styles.profileUsername}>@usukh6ayar</Text>
         </View>
 
         <View style={styles.menuSection}>
