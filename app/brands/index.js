@@ -67,7 +67,7 @@ export default function Brands() {
             <Text style={styles.tabText}>Нүүр</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.tabItem, styles.activeTab]}>
-            <Ionicons name="shop" size={24} color="#F2994A" />
+            <Ionicons name="storefront-outline" size={24} color="#F2994A" />
             <Text style={styles.activeTabText}>Дэлгүүр</Text>
           </TouchableOpacity>
           <TouchableOpacity
