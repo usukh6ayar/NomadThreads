@@ -2,15 +2,18 @@
 import {
   View,
   Text,
-  FlatList,
-  Pressable,
   StyleSheet,
   SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
   Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { Stack } from "expo-router";
 
+// Брэндийн жагсаалт
 const brands = [
   { id: "borgolj", name: "Бөргөлжин", short: "Үндэсний хувцас үйлдвэрлэгч" },
   { id: "zaya", name: "Заяа", short: "Гоёл чимэглэл" },
@@ -20,54 +23,70 @@ const brands = [
   { id: "gobi", name: "Говь", short: "Ноолуур эдлэл" },
 ];
 
-export default function BrandListScreen() {
+export default function Brands() {
   const router = useRouter();
 
+  const renderBrandItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.brandCard}
+      onPress={() => router.push(`/brands/${item.id}`)}
+    >
+      <View style={styles.brandInfo}>
+        <Text style={styles.brandName}>{item.name}</Text>
+        <Text style={styles.brandDescription}>{item.short}</Text>
+      </View>
+      <Ionicons name="chevron-forward" size={20} color="#ccc" />
+    </TouchableOpacity>
+  );
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Брэндүүд</Text>
-      </View>
-
-      <FlatList
-        data={brands}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() => router.push(`/brands/${item.id}`)}
-            style={styles.brandItem}
-          >
-            <View style={styles.brandContent}>
-              <Text style={styles.brandName}>{item.name}</Text>
-              <Text style={styles.brandDescription}>{item.short}</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </Pressable>
-        )}
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
       />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Брэндүүд</Text>
+        </View>
 
-      <View style={styles.tabBar}>
-        <Pressable style={styles.tabItem} onPress={() => router.push("/shop")}>
-          <Ionicons name="home-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Нүүр</Text>
-        </Pressable>
-        <Pressable style={[styles.tabItem, styles.activeTab]}>
-          <Ionicons name="shopping-bag" size={24} color="#F2994A" />
-          <Text style={styles.activeTabText}>Дэлгүүр</Text>
-        </Pressable>
-        <Pressable style={styles.tabItem}>
-          <Ionicons name="grid-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Ангилал</Text>
-        </Pressable>
-        <Pressable
-          style={styles.tabItem}
-          onPress={() => router.push("/settings")}
-        >
-          <Ionicons name="person-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Профайл</Text>
-        </Pressable>
-      </View>
-    </SafeAreaView>
+        <FlatList
+          data={brands}
+          renderItem={renderBrandItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.brandList}
+        />
+
+        <View style={styles.tabBar}>
+          <TouchableOpacity
+            style={styles.tabItem}
+            onPress={() => router.push("/shop")}
+          >
+            <Ionicons name="home-outline" size={24} color="#999" />
+            <Text style={styles.tabText}>Нүүр</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabItem, styles.activeTab]}>
+            <Ionicons name="shop" size={24} color="#F2994A" />
+            <Text style={styles.activeTabText}>Дэлгүүр</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.tabItem}
+            onPress={() => router.push("/categories")}
+          >
+            <Ionicons name="grid-outline" size={24} color="#999" />
+            <Text style={styles.tabText}>Ангилал</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.tabItem}
+            onPress={() => router.push("/settings")}
+          >
+            <Ionicons name="person-outline" size={24} color="#999" />
+            <Text style={styles.tabText}>Профайл</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -86,15 +105,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  brandItem: {
+  brandList: {
+    padding: 15,
+  },
+  brandCard: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  brandContent: {
+  brandInfo: {
     flex: 1,
   },
   brandName: {

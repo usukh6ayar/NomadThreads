@@ -209,10 +209,13 @@ export default function ShopScreen() {
           style={styles.tabItem}
           onPress={() => router.push("/brands")}
         >
-          <Ionicons name="shopping-bag-outline" size={24} color="#999" />
+          <Ionicons name="storefront-outline" size={24} color="#999" />
           <Text style={styles.tabText}>Дэлгүүр</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
+        <TouchableOpacity
+          style={styles.tabItem}
+          onPress={() => router.push("/categories")}
+        >
           <Ionicons name="grid-outline" size={24} color="#999" />
           <Text style={styles.tabText}>Ангилал</Text>
         </TouchableOpacity>

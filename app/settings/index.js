@@ -11,133 +11,121 @@ import {
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import useAuth from "../../hooks/useAuth";
+import { Stack } from "expo-router";
 
-export default function ProfileScreen() {
+const menuItems = [
+  {
+    id: "profile",
+    title: "Хувийн мэдээлэл",
+    icon: "person-outline",
+    onPress: () => {},
+  },
+  {
+    id: "orders",
+    title: "Захиалгын түүх",
+    icon: "receipt-outline",
+    onPress: () => {},
+  },
+  {
+    id: "payment",
+    title: "Төлбөрийн мэдээлэл",
+    icon: "card-outline",
+    onPress: () => {},
+  },
+  {
+    id: "address",
+    title: "Хүргэлтийн хаяг",
+    icon: "location-outline",
+    onPress: () => {},
+  },
+  {
+    id: "notifications",
+    title: "Мэдэгдлийн тохиргоо",
+    icon: "notifications-outline",
+    onPress: () => {},
+  },
+  {
+    id: "logout",
+    title: "Гарах",
+    icon: "log-out-outline",
+    onPress: () => {},
+  },
+];
+
+export default function Settings() {
   const router = useRouter();
-  const { logout } = useAuth();
-
-  const handleLogout = async () => {
-    const success = await logout();
-    if (success) {
-      router.replace("/login");
-    }
-  };
-
-  const menuItems = [
-    {
-      id: "saved",
-      title: "Хадгалсан",
-      icon: "bookmark-outline",
-      onPress: () => {},
-    },
-    {
-      id: "communications",
-      title: "Харилцан яриануud",
-      icon: "chatbubble-outline",
-      onPress: () => {},
-    },
-    {
-      id: "settings",
-      title: "Тохиргоо",
-      icon: "settings-outline",
-      onPress: () => {},
-    },
-    {
-      id: "information",
-      title: "Мэдэгдэл",
-      icon: "notifications-outline",
-      onPress: () => {},
-    },
-    {
-      id: "security",
-      title: "Шинэчлэлт",
-      icon: "shield-outline",
-      onPress: () => {},
-    },
-    {
-      id: "help",
-      title: "Хэл",
-      icon: "globe-outline",
-      onPress: () => {},
-    },
-    {
-      id: "about",
-      title: "Нууцлалын тохиргоо",
-      icon: "lock-closed-outline",
-      onPress: () => {},
-    },
-    {
-      id: "logout",
-      title: "Гарах",
-      icon: "log-out-outline",
-      onPress: handleLogout,
-    },
-  ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Тохиргоо</Text>
-      </View>
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Тохиргоо</Text>
+        </View>
 
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.profileSection}>
-          <View style={styles.profileImageContainer}>
-            <Image
-              source={require("../../assets/profile.png")}
-              style={styles.profileImage}
-              resizeMode="cover"
-            />
-            <TouchableOpacity style={styles.editButton}>
-              <Ionicons name="pencil" size={16} color="white" />
-            </TouchableOpacity>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.profileSection}>
+            <View style={styles.profileImageContainer}>
+              <Image
+                source={require("../../assets/profile.png")}
+                style={styles.profileImage}
+                resizeMode="cover"
+              />
+              <TouchableOpacity style={styles.editButton}>
+                <Ionicons name="pencil" size={16} color="white" />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.profileName}>Usukhbayar</Text>
+            <Text style={styles.profileUsername}>@usukh6ayar</Text>
           </View>
-          <Text style={styles.profileName}>Usukhbayar</Text>
-          <Text style={styles.profileUsername}>@usukh6ayar</Text>
-        </View>
 
-        <View style={styles.menuSection}>
-          {menuItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.menuItem}
-              onPress={item.onPress}
-            >
-              <View style={styles.menuItemContent}>
-                <Ionicons name={item.icon} size={24} color="#333" />
-                <Text style={styles.menuItemText}>{item.title}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#ccc" />
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+          <View style={styles.menuSection}>
+            {menuItems.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.menuItem}
+                onPress={item.onPress}
+              >
+                <View style={styles.menuItemContent}>
+                  <Ionicons name={item.icon} size={24} color="#333" />
+                  <Text style={styles.menuItemText}>{item.title}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#ccc" />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
 
-      <View style={styles.tabBar}>
-        <TouchableOpacity
-          style={styles.tabItem}
-          onPress={() => router.push("/shop")}
-        >
-          <Ionicons name="home-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Нүүр</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabItem}
-          onPress={() => router.push("/brands")}
-        >
-          <Ionicons name="shopping-bag-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Дэлгүүр</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="grid-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Ангилал</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabItem, styles.activeTab]}>
-          <Ionicons name="person" size={24} color="#F2994A" />
-          <Text style={styles.activeTabText}>Профайл</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        <View style={styles.tabBar}>
+          <TouchableOpacity
+            style={styles.tabItem}
+            onPress={() => router.push("/shop")}
+          >
+            <Ionicons name="home-outline" size={24} color="#999" />
+            <Text style={styles.tabText}>Нүүр</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.tabItem}
+            onPress={() => router.push("/brands")}
+          >
+            <Ionicons name="storefront-outline" size={24} color="#999" />
+            <Text style={styles.tabText}>Дэлгүүр</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.tabItem}>
+            <Ionicons name="grid-outline" size={24} color="#999" />
+            <Text style={styles.tabText}>Ангилал</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabItem, styles.activeTab]}>
+            <Ionicons name="person" size={24} color="#F2994A" />
+            <Text style={styles.activeTabText}>Профайл</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </>
   );
 }
 
