@@ -19,7 +19,6 @@ const categories = [
     icon: "diamond-outline",
     count: 32,
   },
-  { id: "toys", name: "Тоглоом", icon: "game-controller-outline", count: 12 },
   { id: "gifts", name: "Бэлэг дурсгал", icon: "gift-outline", count: 20 },
 ];
 
