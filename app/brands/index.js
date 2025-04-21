@@ -12,16 +12,13 @@ import {
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
+import { brandDetails } from "./brandData";
 
-// Брэндийн жагсаалт
-const brands = [
-  { id: "borgolj", name: "Бөргөлжин", short: "Үндэсний хувцас үйлдвэрлэгч" },
-  { id: "zaya", name: "Заяа", short: "Гоёл чимэглэл" },
-  { id: "munkhjin", name: "Мөнхжин", short: "Монгол гутал" },
-  { id: "uyanga", name: "Уянга", short: "Үндэсний дээл" },
-  { id: "nomad", name: "Номад", short: "Монгол гэр ба эдлэл" },
-  { id: "gobi", name: "Говь", short: "Ноолуур эдлэл" },
-];
+const brands = Object.keys(brandDetails).map((key) => ({
+  id: key,
+  name: brandDetails[key].name,
+  short: brandDetails[key].short,
+}));
 
 export default function Brands() {
   const router = useRouter();

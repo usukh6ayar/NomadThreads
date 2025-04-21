@@ -1,5 +1,5 @@
 // app/shop/index.js
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  TextInput,
+  Dimensions,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -22,7 +22,7 @@ const PRODUCTS = [
     price: 149000,
     sizes: ["S", "M", "L", "XL"],
     colors: ["#000", "#69445c", "#d4915d", "#fff"],
-    images: ["../../assets/deel1.png"],
+    image: require("../../assets/dulguun.jpeg"),
     description: "Үндэсний хээтэй, уламжлалт загвар. Торгон материал.",
     category: "deel",
   },
@@ -32,7 +32,7 @@ const PRODUCTS = [
     price: 199000,
     sizes: ["S", "M", "L"],
     colors: ["#000", "#392f54", "#724b3d"],
-    images: ["../../assets/deel2.png"],
+    image: require("../../assets/deel-cover.png"),
     description: "Хөвсгөл нутгийн уламжлалт загвар.",
     category: "deel",
   },
@@ -42,43 +42,62 @@ const PRODUCTS = [
     price: 129000,
     sizes: ["37", "38", "39", "40", "41", "42"],
     colors: ["#000", "#392f54"],
-    images: ["../../assets/boots.png"],
+    image: require("../../assets/deel-cover.png"),
     description: "Гар аргаар урласан, жинхэнэ арьсан монгол гутал.",
     category: "boots",
   },
   {
     id: "4",
-    name: "Тоглоом",
+    name: "Оюухай",
     price: 39000,
     colors: ["#000", "#69445c", "#d4915d"],
-    images: ["../../assets/toy.png"],
-    description: "Монгол уламжлалт тоглоом.",
-    category: "toy",
+    image: require("../../assets/oyukhai.jpeg"),
+    description: "Монгол уламжлалт дээл.",
+    category: "deel",
   },
 ];
 
-const CATEGORIES = [
-  { id: "all", name: "Бүгд" },
-  { id: "deel", name: "Дээл" },
-  { id: "boots", name: "Гутал" },
-  { id: "accessories", name: "Гоёл" },
-  { id: "toy", name: "Тоглоом" },
+// Carousel images for the top slider
+const CAROUSEL_IMAGES = [
+  { id: "1", image: require("../../assets/ca1.jpg") },
+  { id: "2", image: require("../../assets/ca2.jpeg") },
+  { id: "3", image: require("../../assets/deel-cover.png") },
 ];
 
 export default function ShopScreen() {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [searchVisible, setSearchVisible] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const windowWidth = Dimensions.get("window").width;
+  const carouselRef = useRef(null);
 
-  const filteredProducts = PRODUCTS.filter((product) => {
-    const matchCategory =
-      activeCategory === "all" || product.category === activeCategory;
-    const matchSearch = product.name
-      .toLowerCase()
-      .includes(searchText.toLowerCase());
-    return matchCategory && matchSearch;
-  });
+  // Carousel auto-scroll functionality
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextIndex = (activeIndex + 1) % CAROUSEL_IMAGES.length;
+      setActiveIndex(nextIndex);
+
+      // Manually scroll the FlatList to the next item
+      if (carouselRef.current) {
+        carouselRef.current.scrollToIndex({
+          index: nextIndex,
+          animated: true,
+        });
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [activeIndex]);
+
+  // Handle scroll event for the carousel
+  const handleCarouselScroll = (event) => {
+    const slideWidth = windowWidth;
+    const offset = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offset / slideWidth);
+
+    if (index !== activeIndex) {
+      setActiveIndex(index);
+    }
+  };
 
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
@@ -87,7 +106,7 @@ export default function ShopScreen() {
     >
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../assets/deel-cover.png")}
+          source={item.image}
           style={styles.productImage}
           resizeMode="cover"
         />
@@ -100,133 +119,118 @@ export default function ShopScreen() {
     </TouchableOpacity>
   );
 
+  const renderCarouselItem = ({ item }) => (
+    <View style={[styles.carouselItem, { width: windowWidth }]}>
+      <Image
+        source={item.image}
+        style={styles.carouselImage}
+        resizeMode="cover"
+      />
+    </View>
+  );
+
+  const renderHorizontalProduct = ({ item }) => (
+    <TouchableOpacity
+      style={styles.horizontalProductCard}
+      onPress={() => router.push(`/shop/${item.id}`)}
+    >
+      <View style={styles.horizontalImageContainer}>
+        <Image
+          source={item.image}
+          style={styles.horizontalProductImage}
+          resizeMode="cover"
+        />
+      </View>
+      <Text style={styles.horizontalProductName} numberOfLines={2}>
+        {item.name}
+      </Text>
+      <Text style={styles.horizontalProductPrice}>
+        ₮{item.price.toLocaleString()}
+      </Text>
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => setSearchVisible(!searchVisible)}>
-          <Ionicons name="search-outline" size={24} color="black" />
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>Худалдан авах</Text>
         <TouchableOpacity onPress={() => router.push("/shop/favorites")}>
           <Ionicons name="heart-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
-      {/* Search bar-г header-ийн ДОТООД бус, доогуур байршуулна */}
-      {searchVisible && (
-        <View style={styles.searchContainer}>
-          <Ionicons
-            name="search"
-            size={20}
-            color="#999"
-            style={{ marginRight: 8 }}
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Carousel Section */}
+        <View style={styles.carouselContainer}>
+          <FlatList
+            ref={carouselRef}
+            data={CAROUSEL_IMAGES}
+            renderItem={renderCarouselItem}
+            keyExtractor={(item) => item.id}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            scrollEnabled={true} // Allow manual scrolling
+            onMomentumScrollEnd={handleCarouselScroll} // Update active index when scrolling ends
+            contentContainerStyle={styles.carouselList}
+            scrollEventThrottle={16}
+            initialScrollIndex={activeIndex}
+            getItemLayout={(data, index) => ({
+              length: windowWidth,
+              offset: windowWidth * index,
+              index,
+            })}
           />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Бүтээгдэхүүн хайх..."
-            value={searchText}
-            onChangeText={setSearchText}
-          />
-          {searchText.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchText("")}>
-              <Ionicons name="close-circle" size={20} color="#999" />
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
-      <View style={styles.categoryContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoriesScroll}
-        >
-          {CATEGORIES.map((category) => (
-            <TouchableOpacity
-              key={category.id}
-              style={[
-                styles.categoryButton,
-                activeCategory === category.id && styles.activeCategory,
-              ]}
-              onPress={() => setActiveCategory(category.id)}
-            >
-              <Text
+
+          <View style={styles.paginationContainer}>
+            {CAROUSEL_IMAGES.map((_, idx) => (
+              <View
+                key={idx}
                 style={[
-                  styles.categoryText,
-                  activeCategory === category.id && styles.activeCategoryText,
+                  styles.paginationDot,
+                  activeIndex === idx ? styles.paginationDotActive : {},
                 ]}
-              >
-                {category.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      <View style={styles.brandsSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Брэндүүд</Text>
-          <TouchableOpacity onPress={() => router.push("/brands")}>
-            <Text style={styles.seeAllText}>Бүгдийг харах</Text>
-          </TouchableOpacity>
+              />
+            ))}
+          </View>
         </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.brandsScroll}
-        >
-          <TouchableOpacity
-            style={styles.brandItem}
-            onPress={() => router.push("/brands/borgolj")}
-          >
-            <View style={styles.brandCircle}>
-              <Text style={styles.brandInitial}>Б</Text>
-            </View>
-            <Text style={styles.brandName}>Бөргөлжин</Text>
-          </TouchableOpacity>
+        {/* Recommended Products Section */}
+        <View style={styles.recommendedSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Санал болгох</Text>
+            <TouchableOpacity
+              onPress={() => router.push("/shop/recommendations")}
+            >
+              <Text style={styles.seeAllText}>Илүүг харах</Text>
+            </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity
-            style={styles.brandItem}
-            onPress={() => router.push("/brands/zaya")}
-          >
-            <View style={styles.brandCircle}>
-              <Text style={styles.brandInitial}>З</Text>
-            </View>
-            <Text style={styles.brandName}>Заяа</Text>
-          </TouchableOpacity>
+          <FlatList
+            data={PRODUCTS}
+            renderItem={renderHorizontalProduct}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalProductsContainer}
+          />
+        </View>
 
-          <TouchableOpacity
-            style={styles.brandItem}
-            onPress={() => router.push("/brands")}
-          >
-            <View style={styles.brandCircle}>
-              <Text style={styles.brandInitial}>М</Text>
-            </View>
-            <Text style={styles.brandName}>Мөнхжин</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.brandItem}
-            onPress={() => router.push("/brands")}
-          >
-            <View style={styles.brandCircle}>
-              <Text style={styles.brandInitial}>Г</Text>
-            </View>
-            <Text style={styles.brandName}>Говь</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-
-      <ScrollView style={styles.scrollView}>
-        <Text style={styles.sectionTitle}>Бүтээгдэхүүн</Text>
-        <FlatList
-          data={filteredProducts}
-          renderItem={renderProductItem}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          scrollEnabled={false}
-          contentContainerStyle={styles.productsContainer}
-        />
+        {/* All Products Section */}
+        <View style={styles.allProductsSection}>
+          <Text style={styles.sectionTitle}>Бүтээгдэхүүн</Text>
+          <FlatList
+            data={PRODUCTS}
+            renderItem={renderProductItem}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            scrollEnabled={false}
+            contentContainerStyle={styles.productsContainer}
+          />
+        </View>
       </ScrollView>
 
       <View style={styles.tabBar}>
@@ -280,30 +284,42 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  categoryContainer: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
+  // Carousel Styles
+  carouselContainer: {
+    height: 200,
+    position: "relative",
   },
-  categoriesScroll: {
-    paddingHorizontal: 10,
+  carouselList: {
+    height: 200,
   },
-  categoryButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    marginHorizontal: 5,
-    borderRadius: 20,
-    backgroundColor: "#F5F5F5",
+  carouselItem: {
+    height: 200,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  activeCategory: {
-    backgroundColor: "#F2994A",
+  carouselImage: {
+    width: "100%",
+    height: "100%",
   },
-  categoryText: {
-    color: "#333",
+  paginationContainer: {
+    flexDirection: "row",
+    position: "absolute",
+    bottom: 10,
+    alignSelf: "center",
   },
-  activeCategoryText: {
-    color: "#FFF",
-    fontWeight: "bold",
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    marginHorizontal: 4,
+  },
+  paginationDotActive: {
+    backgroundColor: "#fff",
+  },
+  // Recommended Section Styles
+  recommendedSection: {
+    marginVertical: 15,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -322,36 +338,46 @@ const styles = StyleSheet.create({
     color: "#F2994A",
     fontWeight: "500",
   },
-  brandsSection: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
-  },
-  brandsScroll: {
+  horizontalProductsContainer: {
     paddingHorizontal: 10,
   },
-  brandItem: {
-    alignItems: "center",
-    marginHorizontal: 15,
-    width: 60,
+  horizontalProductCard: {
+    width: 140,
+    marginHorizontal: 5,
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    padding: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  brandCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#E0E0E0",
-    justifyContent: "center",
-    alignItems: "center",
+  horizontalImageContainer: {
+    height: 140,
+    borderRadius: 8,
     marginBottom: 5,
+    backgroundColor: "#F5F5F5",
   },
-  brandInitial: {
-    fontSize: 20,
+  horizontalProductImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 8,
+  },
+  horizontalProductName: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  horizontalProductPrice: {
+    fontSize: 14,
     fontWeight: "bold",
-    color: "#333",
+    marginTop: 3,
+    color: "#F2994A",
   },
-  brandName: {
-    fontSize: 12,
-    textAlign: "center",
+  // All Products Section
+  allProductsSection: {
+    marginTop: 5,
+    marginBottom: 20,
   },
   productsContainer: {
     paddingHorizontal: 7,
@@ -422,19 +448,5 @@ const styles = StyleSheet.create({
     color: "#F2994A",
     fontWeight: "bold",
     marginTop: 2,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F0F0F0",
-    marginHorizontal: 15,
-    marginTop: 10,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  searchInput: {
-    flex: 1,
-    paddingVertical: 8,
-    fontSize: 16,
   },
 });
