@@ -1,4 +1,5 @@
-// app/login/index.js
+// app/login.js
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,176 +7,194 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Alert,
+  SafeAreaView,
 } from "react-native";
-import { useState } from "react";
 import { useRouter } from "expo-router";
-import useAuth from "../../hooks/useAuth";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
-
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [emailOrPhone, setEmailOrPhone] = useState("");
+  const [password, setPassword] = useState("");
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Алдаа", "И-мэйл болон нууц үг оруулна уу");
+    if (!emailOrPhone || !password) {
+      alert("И-мэйл/утас болон нууц үг оруулна уу.");
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      const success = await login(email, password);
-
-      if (success) {
-        router.replace("/shop");
-      } else {
-        Alert.alert("Алдаа", "И-мэйл эсвэл нууц үг буруу байна");
-      }
+      await AsyncStorage.setItem("user", JSON.stringify({ emailOrPhone }));
+      router.replace("/shop");
     } catch (error) {
-      Alert.alert("Алдаа", "Нэвтрэх үйл явцад алдаа гарлаа");
-    } finally {
-      setIsLoading(false);
+      console.error("Login error:", error);
+      alert("Нэвтрэхэд алдаа гарлаа.");
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <View style={styles.header}>
-          <Image
-            source={require("../../assets/deel-cover.png")}
-            style={styles.logo}
-          />
-          <Text style={styles.welcomeText}>Тавтай морилно уу!</Text>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <Image
+        source={require("../../assets/deel-cover.png")}
+        style={styles.image}
+        resizeMode="cover"
+      />
 
-        <View style={styles.formContainer}>
-          <TextInput
-            placeholder="И-мэйл хаягаа оруулна уу"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+      <View style={styles.innerContainer}>
+        <Text style={styles.title}>Тавтай морилно уу!</Text>
 
+        <TextInput
+          style={styles.input}
+          placeholder="Email Хаяг / Утасны Дугаар"
+          value={emailOrPhone}
+          onChangeText={setEmailOrPhone}
+        />
+
+        <View style={styles.passwordContainer}>
           <TextInput
-            placeholder="Нууц үгээ оруулна уу"
-            secureTextEntry
+            style={styles.passwordInput}
+            placeholder="Нууц үг"
+            secureTextEntry={!passwordVisible}
             value={password}
             onChangeText={setPassword}
-            style={styles.input}
           />
-
-          <TouchableOpacity style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Нууц үгээ мартсан уу?</Text>
-          </TouchableOpacity>
-
           <TouchableOpacity
-            style={[styles.loginButton, isLoading && styles.disabledButton]}
-            onPress={handleLogin}
-            disabled={isLoading}
+            onPress={() => setPasswordVisible(!passwordVisible)}
           >
-            <Text style={styles.loginButtonText}>
-              {isLoading ? "Нэвтэрч байна..." : "Нэвтрэх"}
-            </Text>
+            <Ionicons
+              name={passwordVisible ? "eye-off" : "eye"}
+              size={20}
+              color="#888"
+            />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.registerText}>Бүртгэлгүй хэрэглэгч?</Text>
-          <TouchableOpacity onPress={() => router.push("/login/register")}>
-            <Text style={styles.registerLink}>Бүртгүүлэх</Text>
+        <TouchableOpacity style={styles.forgotBtn}>
+          <Text style={styles.forgotText}>Нууц үгээ мартсан уу?</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <LinearGradient
+            colors={["#FFC107", "#D32F2F"]}
+            style={styles.gradientButton}
+            start={{ x: 0, y: 1 }}
+            end={{ x: 1, y: 0 }}
+          >
+            <Text style={styles.loginText}>Нэвтрэх</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/register")}>
+          <Text style={styles.registerText}>Бүртгүүлэх</Text>
+        </TouchableOpacity>
+
+        <View style={styles.dividerContainer}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>Эсвэл</Text>
+          <View style={styles.line} />
+        </View>
+
+        <View style={styles.socialContainer}>
+          <TouchableOpacity style={styles.socialButton}>
+            <Image
+              source={require("../../assets/google.png")}
+              style={styles.socialIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton}>
+            <Image
+              source={require("../../assets/facebook.png")}
+              style={styles.socialIcon}
+            />
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-  },
-  header: {
-    alignItems: "center",
-    marginTop: 40,
-    marginBottom: 20,
-  },
-  logo: {
-    width: "100%",
-    height: 200,
-    marginBottom: 20,
-    alignSelf: "stretch",
-    resizeMode: "cover",
-  },
-  welcomeText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  formContainer: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    marginBottom: 5,
-    fontWeight: "500",
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
+  image: { width: "100%", height: 200 },
+  innerContainer: { padding: 20 },
+  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20, marginTop: 30 },
   input: {
     borderWidth: 1,
-    borderColor: "#DDDDDD",
+    borderColor: "#ddd",
     borderRadius: 8,
     padding: 12,
-    marginBottom: 16,
-    backgroundColor: "#F8F8F8",
+    marginBottom: 12,
   },
-  forgotPassword: {
-    alignSelf: "flex-end",
-    marginBottom: 20,
-  },
-  forgotPasswordText: {
-    color: "#666666",
-  },
-  loginButton: {
-    backgroundColor: "#F2994A",
+  passwordContainer: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#ddd",
     borderRadius: 8,
-    padding: 15,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingVertical: 12,
+  },
+  forgotBtn: { alignItems: "flex-end", marginBottom: 16 },
+  forgotText: { color: "#007BFF", fontSize: 13 },
+  loginButton: { marginBottom: 20 },
+  gradientButton: {
+    borderRadius: 8,
+    paddingVertical: 12,
     alignItems: "center",
   },
-  disabledButton: {
-    backgroundColor: "#CCCCCC",
-  },
-  loginButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
+  loginText: {
+    color: "#fff",
+    fontFamily: "Inter",
+    fontWeight: "semibold",
     fontSize: 16,
   },
-  footer: {
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#ccc",
+  },
+  orText: {
+    marginHorizontal: 10,
+    color: "#888",
+    fontSize: 14,
+    fontFamily: "Inter",
+    fontWeight: "semibold",
+  },
+  socialContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    gap: 16,
     marginBottom: 20,
   },
-  registerText: {
-    marginRight: 5,
+  socialButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  registerLink: {
-    color: "#F2994A",
-    fontWeight: "bold",
+  socialIcon: {
+    width: 48,
+    height: 48,
+  },
+  registerText: {
+    textAlign: "center",
+    color: "#007BFF",
+    fontSize: 15,
+    marginBottom: 10,
+    fontFamily: "Inter",
+    fontWeight: "semibold",
   },
 });

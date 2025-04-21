@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  TextInput,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -67,11 +68,17 @@ const CATEGORIES = [
 export default function ShopScreen() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("all");
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
-  const filteredProducts =
-    activeCategory === "all"
-      ? PRODUCTS
-      : PRODUCTS.filter((product) => product.category === activeCategory);
+  const filteredProducts = PRODUCTS.filter((product) => {
+    const matchCategory =
+      activeCategory === "all" || product.category === activeCategory;
+    const matchSearch = product.name
+      .toLowerCase()
+      .includes(searchText.toLowerCase());
+    return matchCategory && matchSearch;
+  });
 
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
@@ -96,7 +103,7 @@ export default function ShopScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setSearchVisible(!searchVisible)}>
           <Ionicons name="search-outline" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Худалдан авах</Text>
@@ -105,6 +112,28 @@ export default function ShopScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Search bar-г header-ийн ДОТООД бус, доогуур байршуулна */}
+      {searchVisible && (
+        <View style={styles.searchContainer}>
+          <Ionicons
+            name="search"
+            size={20}
+            color="#999"
+            style={{ marginRight: 8 }}
+          />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Бүтээгдэхүүн хайх..."
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+          {searchText.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchText("")}>
+              <Ionicons name="close-circle" size={20} color="#999" />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
       <View style={styles.categoryContainer}>
         <ScrollView
           horizontal
@@ -393,5 +422,19 @@ const styles = StyleSheet.create({
     color: "#F2994A",
     fontWeight: "bold",
     marginTop: 2,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F0F0F0",
+    marginHorizontal: 15,
+    marginTop: 10,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 8,
+    fontSize: 16,
   },
 });

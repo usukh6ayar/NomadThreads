@@ -3,12 +3,15 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
+  FlatList,
   TouchableOpacity,
+  Image,
+  TextInput,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
+import { useState } from "react";
 
 const categories = [
   { id: "deel", name: "Дээл", icon: "shirt-outline", count: 24 },
@@ -22,40 +25,72 @@ const categories = [
   { id: "gifts", name: "Бэлэг дурсгал", icon: "gift-outline", count: 20 },
 ];
 
+const sampleImages = [
+  "https://via.placeholder.com/70",
+  "https://via.placeholder.com/70",
+  "https://via.placeholder.com/70",
+  "https://via.placeholder.com/70",
+];
+
 export default function CategoriesScreen() {
   const router = useRouter();
+  const [search, setSearch] = useState("");
+
+  const filteredCategories = categories.filter((cat) =>
+    cat.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const renderCategoryItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.gridItem}
+      onPress={() => router.push(`/categories/${item.id}`)}
+    >
+      <View style={styles.imageGrid}>
+        {sampleImages.map((img, index) => (
+          <Image key={index} source={{ uri: img }} style={styles.gridImage} />
+        ))}
+      </View>
+      <View style={styles.nameRow}>
+        <Text style={styles.categoryName}>{item.name}</Text>
+        <Text style={styles.categoryCount}>({item.count})</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Ангилал</Text>
+        {/* 🔍 Search Input */}
+        <View style={styles.searchWrapper}>
+          <Ionicons
+            name="search-outline"
+            size={20}
+            color="#888"
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Ангилал хайх..."
+            value={search}
+            onChangeText={setSearch}
+            placeholderTextColor="#aaa"
+          />
         </View>
 
-        <ScrollView style={styles.scrollView}>
-          {categories.map((category) => (
-            <TouchableOpacity
-              key={category.id}
-              style={styles.categoryItem}
-              onPress={() => router.push(`/categories/${category.id}`)}
-            >
-              <View style={styles.categoryInfo}>
-                <Ionicons name={category.icon} size={24} color="#666" />
-                <Text style={styles.categoryName}>{category.name}</Text>
-              </View>
-              <View style={styles.categoryMeta}>
-                <Text style={styles.categoryCount}>{category.count}</Text>
-                <Ionicons name="chevron-forward" size={20} color="#ccc" />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        {/* 🏷️ Header */}
+        <Text style={styles.headerTitle}>Ангилал</Text>
 
+        {/* 🧩 Grid */}
+        <FlatList
+          data={filteredCategories}
+          renderItem={renderCategoryItem}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          contentContainerStyle={styles.grid}
+        />
+
+        {/* 🔽 Bottom Tab */}
         <View style={styles.tabBar}>
           <TouchableOpacity
             style={styles.tabItem}
@@ -93,43 +128,55 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  header: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
-    alignItems: "center",
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: "#333",
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
-  scrollView: {
+  grid: {
+    paddingHorizontal: 10,
+    paddingBottom: 80,
+  },
+  gridItem: {
     flex: 1,
+    margin: 10,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 12,
+    padding: 10,
+    alignItems: "center",
   },
-  categoryItem: {
+  imageGrid: {
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
-    alignItems: "center",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
+    width: "100%",
   },
-  categoryInfo: {
+  gridImage: {
+    width: "47%",
+    height: 60,
+    marginBottom: 6,
+    borderRadius: 6,
+    backgroundColor: "#ddd",
+  },
+  nameRow: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 10,
   },
   categoryName: {
     fontSize: 16,
-    marginLeft: 12,
-  },
-  categoryMeta: {
-    flexDirection: "row",
-    alignItems: "center",
+    fontWeight: "600",
+    marginRight: 6,
   },
   categoryCount: {
     fontSize: 14,
-    color: "#666",
-    marginRight: 8,
+    color: "#888",
   },
   tabBar: {
     flexDirection: "row",
@@ -154,5 +201,17 @@ const styles = StyleSheet.create({
     color: "#F2994A",
     fontWeight: "bold",
     marginTop: 2,
+  },
+  searchWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f2f2f2",
+    margin: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  searchIcon: {
+    marginRight: 8,
   },
 });

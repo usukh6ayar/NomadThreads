@@ -69,7 +69,7 @@ export default function Settings() {
 
         <ScrollView style={styles.scrollView}>
           <View style={styles.profileSection}>
-            <View style={styles.profileImageContainer}>
+            <View style={styles.profileImageWrapper}>
               <Image
                 source={require("../../assets/profile.png")}
                 style={styles.profileImage}
@@ -115,7 +115,10 @@ export default function Settings() {
             <Ionicons name="storefront-outline" size={24} color="#999" />
             <Text style={styles.tabText}>Дэлгүүр</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.tabItem}>
+          <TouchableOpacity
+            onPress={() => router.push("/categories")}
+            style={styles.tabItem}
+          >
             <Ionicons name="grid-outline" size={24} color="#999" />
             <Text style={styles.tabText}>Ангилал</Text>
           </TouchableOpacity>
@@ -161,21 +164,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: "#f0f0f0",
     overflow: "hidden",
-  },
-  profileImage: {
-    width: "100%",
-    height: "100%",
-  },
-  editButton: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#2B78E4",
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: "center",
-    alignItems: "center",
   },
   profileName: {
     fontSize: 20,
@@ -228,5 +216,33 @@ const styles = StyleSheet.create({
     color: "#F2994A",
     fontWeight: "bold",
     marginTop: 2,
+  },
+  profileImageWrapper: {
+    position: "relative",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 15,
+    backgroundColor: "#f0f0f0",
+  },
+
+  profileImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 50,
+  },
+
+  editButton: {
+    position: "absolute",
+    bottom: -5,
+    right: -5,
+    backgroundColor: "#2B78E4",
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#fff",
   },
 });
