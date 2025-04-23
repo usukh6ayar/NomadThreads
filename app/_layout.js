@@ -1,11 +1,23 @@
 // app/_layout.js
 import { Stack } from "expo-router";
 import { AuthProvider } from "../context/AuthContext";
+import { CartProvider } from "../context/CartContext";
+import { FavoritesProvider } from "../context/FavoritesContext";
 
 export default function Layout() {
   return (
     <AuthProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <CartProvider>
+        <FavoritesProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: "none",
+              presentation: "transparentModal",
+            }}
+          />
+        </FavoritesProvider>
+      </CartProvider>
     </AuthProvider>
   );
 }

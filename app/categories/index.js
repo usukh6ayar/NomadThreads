@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack } from "expo-router";
 import { useState } from "react";
+import BottomTabs from "../../components/BottomTabs";
 
 const categories = [
   { id: "deel", name: "Дээл", icon: "shirt-outline", count: 24 },
@@ -58,68 +59,39 @@ export default function CategoriesScreen() {
   );
 
   return (
-    <>
+    <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView style={styles.container}>
-        {/* 🔍 Search Input */}
-        <View style={styles.searchWrapper}>
-          <Ionicons
-            name="search-outline"
-            size={20}
-            color="#888"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Ангилал хайх..."
-            value={search}
-            onChangeText={setSearch}
-            placeholderTextColor="#aaa"
-          />
-        </View>
-
-        {/* 🏷️ Header */}
-        <Text style={styles.headerTitle}>Ангилал</Text>
-
-        {/* 🧩 Grid */}
-        <FlatList
-          data={filteredCategories}
-          renderItem={renderCategoryItem}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          contentContainerStyle={styles.grid}
+      {/* 🔍 Search Input */}
+      <View style={styles.searchWrapper}>
+        <Ionicons
+          name="search-outline"
+          size={20}
+          color="#888"
+          style={styles.searchIcon}
         />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Ангилал хайх..."
+          value={search}
+          onChangeText={setSearch}
+          placeholderTextColor="#aaa"
+        />
+      </View>
 
-        {/* 🔽 Bottom Tab */}
-        <View style={styles.tabBar}>
-          <TouchableOpacity
-            style={styles.tabItem}
-            onPress={() => router.push("/shop")}
-          >
-            <Ionicons name="home-outline" size={24} color="#999" />
-            <Text style={styles.tabText}>Нүүр</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.tabItem}
-            onPress={() => router.push("/brands")}
-          >
-            <Ionicons name="storefront-outline" size={24} color="#999" />
-            <Text style={styles.tabText}>Дэлгүүр</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.tabItem, styles.activeTab]}>
-            <Ionicons name="grid" size={24} color="#F2994A" />
-            <Text style={styles.activeTabText}>Ангилал</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.tabItem}
-            onPress={() => router.push("/settings")}
-          >
-            <Ionicons name="person-outline" size={24} color="#999" />
-            <Text style={styles.tabText}>Профайл</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    </>
+      {/* 🏷️ Header */}
+      <Text style={styles.headerTitle}>Ангилал</Text>
+
+      {/* 🧩 Grid */}
+      <FlatList
+        data={filteredCategories}
+        renderItem={renderCategoryItem}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        contentContainerStyle={styles.grid}
+      />
+
+      <BottomTabs />
+    </SafeAreaView>
   );
 }
 

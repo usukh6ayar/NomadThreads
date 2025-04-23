@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import BottomTabs from "../../components/BottomTabs";
 
 // Mock data for the products
 const PRODUCTS = [
@@ -67,6 +68,7 @@ const CAROUSEL_IMAGES = [
 export default function ShopScreen() {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [cartItems, setCartItems] = useState([]); // Added state for cart items
   const windowWidth = Dimensions.get("window").width;
   const carouselRef = useRef(null);
 
@@ -153,10 +155,25 @@ export default function ShopScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Худалдан авах</Text>
-        <TouchableOpacity onPress={() => router.push("/shop/favorites")}>
-          <Ionicons name="heart-outline" size={24} color="black" />
-        </TouchableOpacity>
+        <View style={styles.headerIcons}>
+          <TouchableOpacity onPress={() => router.push("/search")}>
+            <Ionicons name="search-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/shop/favorites")}>
+            <Ionicons name="heart-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cartContainer}
+            onPress={() => router.push("/shop/cart")}
+          >
+            <Ionicons name="cart-outline" size={24} color="black" />
+            {cartItems.length > 0 && (
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>{cartItems.length}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
@@ -233,33 +250,7 @@ export default function ShopScreen() {
         </View>
       </ScrollView>
 
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={[styles.tabItem, styles.activeTab]}>
-          <Ionicons name="home" size={24} color="#F2994A" />
-          <Text style={styles.activeTabText}>Нүүр</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabItem}
-          onPress={() => router.push("/brands")}
-        >
-          <Ionicons name="storefront-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Дэлгүүр</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabItem}
-          onPress={() => router.push("/categories")}
-        >
-          <Ionicons name="grid-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Ангилал</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.tabItem}
-          onPress={() => router.push("/settings")}
-        >
-          <Ionicons name="person-outline" size={24} color="#999" />
-          <Text style={styles.tabText}>Профайл</Text>
-        </TouchableOpacity>
-      </View>
+      <BottomTabs />
     </SafeAreaView>
   );
 }
@@ -271,15 +262,36 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end", // Changed from space-between to flex-end
     alignItems: "center",
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#EEEEEE",
   },
-  headerTitle: {
-    fontSize: 18,
+  headerIcons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 15,
+  },
+  cartContainer: {
+    position: "relative",
+  },
+  cartBadge: {
+    position: "absolute",
+    right: -8,
+    top: -8,
+    backgroundColor: "#F2994A",
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cartBadgeText: {
+    color: "#fff",
+    fontSize: 12,
     fontWeight: "bold",
+    paddingHorizontal: 5,
   },
   scrollView: {
     flex: 1,

@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,50 +19,65 @@ const menuItems = [
     id: "profile",
     title: "Хувийн мэдээлэл",
     icon: "person-outline",
-    onPress: () => {},
+    onPress: (router) => router.push("/settings/profile"),
   },
   {
     id: "orders",
     title: "Захиалгын түүх",
     icon: "receipt-outline",
-    onPress: () => {},
+    onPress: (router) => router.push("/settings/orders"),
   },
   {
     id: "payment",
     title: "Төлбөрийн мэдээлэл",
     icon: "card-outline",
-    onPress: () => {},
+    onPress: (router) => router.push("/settings/payment"),
   },
   {
     id: "address",
     title: "Хүргэлтийн хаяг",
     icon: "location-outline",
-    onPress: () => {},
+    onPress: (router) => router.push("/settings/address"),
   },
   {
     id: "notifications",
     title: "Мэдэгдлийн тохиргоо",
     icon: "notifications-outline",
-    onPress: () => {},
+    onPress: (router) => router.push("/settings/notifications"),
   },
   {
     id: "logout",
     title: "Гарах",
     icon: "log-out-outline",
-    onPress: () => {},
+    onPress: (router, logout) => {
+      Alert.alert("Гарах", "Та системээс гарахдаа итгэлтэй байна уу?", [
+        {
+          text: "Үгүй",
+          style: "cancel",
+        },
+        {
+          text: "Тийм",
+          onPress: async () => {
+            await logout();
+            router.replace("/login");
+          },
+        },
+      ]);
+    },
   },
 ];
 
 export default function Settings() {
   const router = useRouter();
+  const { user, logout } = useAuth();
+
+  const handleMenuPress = (item) => {
+    item.onPress(router, logout);
+  };
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Тохиргоо</Text>
@@ -75,12 +91,17 @@ export default function Settings() {
                 style={styles.profileImage}
                 resizeMode="cover"
               />
-              <TouchableOpacity style={styles.editButton}>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => router.push("/settings/profile")}
+              >
                 <Ionicons name="pencil" size={16} color="white" />
               </TouchableOpacity>
             </View>
-            <Text style={styles.profileName}>Usukhbayar</Text>
-            <Text style={styles.profileUsername}>@usukh6ayar</Text>
+            <Text style={styles.profileName}>{user?.name || "Хэрэглэгч"}</Text>
+            <Text style={styles.profileUsername}>
+              {user?.email || "И-мэйл"}
+            </Text>
           </View>
 
           <View style={styles.menuSection}>
@@ -88,7 +109,7 @@ export default function Settings() {
               <TouchableOpacity
                 key={item.id}
                 style={styles.menuItem}
-                onPress={item.onPress}
+                onPress={() => handleMenuPress(item)}
               >
                 <View style={styles.menuItemContent}>
                   <Ionicons name={item.icon} size={24} color="#333" />

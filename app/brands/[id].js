@@ -32,11 +32,11 @@ export default function BrandDetailScreen() {
     },
     {
       name: "Өсөхбаяр",
-      text: "Өргөн сонголттой дэлгүүр байна.",
+      text: "Үнэхээр гоё дэлгүүр байна.",
     },
     {
       name: "Өсөхбаяр",
-      text: "Өргөн сонголттой дэлгүүр байна.",
+      text: "Дараа дахин очно.",
     },
   ];
 
@@ -58,15 +58,17 @@ export default function BrandDetailScreen() {
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <View style={styles.profileHeader}>
-          {" "}
           <Image
             source={require("../../assets/deel-cover.png")}
             style={styles.banner}
           />
-          <Image
-            source={require("../../assets/dulguun.jpeg")}
-            style={styles.profileImage}
-          />
+          <View style={styles.profileInfo}>
+            <Image
+              source={require("../../assets/dulguun.jpeg")}
+              style={styles.profileImage}
+            />
+            <Text style={styles.profileName}>{brand.name}</Text>
+          </View>
         </View>
 
         {/* Бидний тухай хэсэг */}
@@ -209,7 +211,14 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   profileHeader: {
-    marginBottom: 70,
+    marginBottom: 24,
+  },
+  profileInfo: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    position: "absolute",
+    bottom: -10,
+    left: 20,
   },
   profileImage: {
     width: 100,
@@ -217,9 +226,15 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 3,
     borderColor: "white",
-    position: "absolute",
-    bottom: -50,
-    left: 20,
+  },
+  profileName: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#2c3e50",
+    marginLeft: 16,
+    textShadowColor: "white",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   fixedFooter: {
     position: "absolute",

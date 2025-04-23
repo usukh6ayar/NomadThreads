@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
+import { useCart } from "../../context/CartContext";
+import { useFavorites } from "../../context/FavoritesContext";
 
 // Mock data for the products (same as in index.js)
 const PRODUCTS = [
@@ -63,6 +65,9 @@ export default function ProductDetailScreen() {
   );
   const [quantity, setQuantity] = useState(1);
 
+  const { addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
+
   const increaseQuantity = () => setQuantity((prev) => prev + 1);
   const decreaseQuantity = () => {
     if (quantity > 1) {
@@ -76,8 +81,12 @@ export default function ProductDetailScreen() {
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <AntDesign name="hearto" size={24} color="black" />
+        <TouchableOpacity onPress={() => toggleFavorite(product)}>
+          <Ionicons
+            name={isFavorite(product.id) ? "heart" : "heart-outline"}
+            size={24}
+            color="#F2994A"
+          />
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.scrollView}>
@@ -180,7 +189,18 @@ export default function ProductDetailScreen() {
         </View>
         <TouchableOpacity
           style={styles.addToCartButton}
-          onPress={() => router.push("/shop/checkout")}
+          onPress={() => {
+            if (!selectedSize && product.sizes) {
+              alert("Хэмжээ сонгоно уу");
+              return;
+            }
+            if (!selectedColor && product.colors) {
+              alert("Өнгө сонгоно уу");
+              return;
+            }
+            addToCart(product, quantity, selectedSize, selectedColor);
+            alert("Сагсанд нэмэгдлээ");
+          }}
         >
           <Text style={styles.addToCartText}>Сагсанд нэмэх</Text>
         </TouchableOpacity>
