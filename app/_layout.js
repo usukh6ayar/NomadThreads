@@ -12,8 +12,6 @@ export default function Layout() {
           <Stack
             screenOptions={{
               headerShown: false,
-              animation: "none",
-              presentation: "transparentModal",
             }}
           />
         </FavoritesProvider>
