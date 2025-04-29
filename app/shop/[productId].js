@@ -187,23 +187,42 @@ export default function ProductDetailScreen() {
             ₮{(product.price * quantity).toLocaleString()}
           </Text>
         </View>
-        <TouchableOpacity
-          style={styles.addToCartButton}
-          onPress={() => {
-            if (!selectedSize && product.sizes) {
-              alert("Хэмжээ сонгоно уу");
-              return;
-            }
-            if (!selectedColor && product.colors) {
-              alert("Өнгө сонгоно уу");
-              return;
-            }
-            addToCart(product, quantity, selectedSize, selectedColor);
-            alert("Сагсанд нэмэгдлээ");
-          }}
-        >
-          <Text style={styles.addToCartText}>Сагсанд нэмэх</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            style={[styles.button, styles.addToCartButton]}
+            onPress={() => {
+              if (!selectedSize && product.sizes) {
+                alert("Хэмжээ сонгоно уу");
+                return;
+              }
+              if (!selectedColor && product.colors) {
+                alert("Өнгө сонгоно уу");
+                return;
+              }
+              addToCart(product, quantity, selectedSize, selectedColor);
+              alert("Сагсанд нэмэгдлээ");
+            }}
+          >
+            <Text style={styles.buttonText}>Сагсанд нэмэх</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.buyNowButton]}
+            onPress={() => {
+              if (!selectedSize && product.sizes) {
+                alert("Хэмжээ сонгоно уу");
+                return;
+              }
+              if (!selectedColor && product.colors) {
+                alert("Өнгө сонгоно уу");
+                return;
+              }
+              addToCart(product, quantity, selectedSize, selectedColor);
+              router.push("/shop/checkout");
+            }}
+          >
+            <Text style={styles.buyNowButtonText}>Шууд авах</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -326,14 +345,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   bottomBar: {
-    flexDirection: "row",
     padding: 15,
     borderTopWidth: 1,
     borderTopColor: "#EEE",
-    alignItems: "center",
   },
   totalPrice: {
-    flex: 1,
+    marginBottom: 12,
   },
   totalTitle: {
     fontSize: 14,
@@ -343,15 +360,35 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  addToCartButton: {
-    backgroundColor: "#F2994A",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
+  buttonGroup: {
+    flexDirection: "row",
+    gap: 12,
   },
-  addToCartText: {
-    color: "#FFF",
+  button: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  addToCartButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#F2994A",
+  },
+  buyNowButton: {
+    backgroundColor: "#F2994A",
+  },
+  buttonText: {
     fontWeight: "bold",
     fontSize: 16,
+    color: "#F2994A",
+  },
+  buyNowButton: {
+    backgroundColor: "#F2994A",
+  },
+  buyNowButtonText: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "#FFF",
   },
 });
