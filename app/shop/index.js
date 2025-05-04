@@ -1,4 +1,3 @@
-// app/shop/index.js
 import { useState, useEffect, useRef } from "react";
 import {
   View,
@@ -60,9 +59,24 @@ const PRODUCTS = [
 
 // Carousel images for the top slider
 const CAROUSEL_IMAGES = [
-  { id: "1", image: require("../../assets/ca1.jpg") },
-  { id: "2", image: require("../../assets/ca2.jpeg") },
-  { id: "3", image: require("../../assets/deel-cover.png") },
+  {
+    id: "1",
+    image: require("../../assets/ca1.jpg"),
+    title: "Explore Mongolian Elegance",
+    description: "Discover stylish and traditional outfits for any occasion.",
+  },
+  {
+    id: "2",
+    image: require("../../assets/ca2.jpeg"),
+    title: "Handcrafted Perfection",
+    description: "Unique designs made with passion and precision.",
+  },
+  {
+    id: "3",
+    image: require("../../assets/deel-cover.png"),
+    title: "Celebrate Heritage",
+    description: "Wear the beauty of Mongolian culture.",
+  },
 ];
 
 export default function ShopScreen() {
@@ -118,6 +132,12 @@ export default function ShopScreen() {
       </View>
       <Text style={styles.productName}>{item.name}</Text>
       <Text style={styles.productPrice}>₮{item.price.toLocaleString()}</Text>
+      <TouchableOpacity
+        style={styles.buyNowButton}
+        onPress={() => alert("Buy Now clicked!")}
+      >
+        <Text style={styles.buyNowText}>Buy Now</Text>
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 
@@ -128,6 +148,16 @@ export default function ShopScreen() {
         style={styles.carouselImage}
         resizeMode="cover"
       />
+      <View style={styles.carouselTextContainer}>
+        <Text style={styles.carouselTitle}>{item.title}</Text>
+        <Text style={styles.carouselDescription}>{item.description}</Text>
+        <TouchableOpacity
+          style={styles.carouselButton}
+          onPress={() => alert("Explore clicked!")}
+        >
+          <Text style={styles.carouselButtonText}>Explore</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -155,6 +185,7 @@ export default function ShopScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        <Text style={styles.headerTitle}>NomadThreads</Text>
         <View style={styles.headerIcons}>
           <TouchableOpacity onPress={() => router.push("/search")}>
             <Ionicons name="search-outline" size={24} color="black" />
@@ -190,16 +221,7 @@ export default function ShopScreen() {
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            scrollEnabled={true} // Allow manual scrolling
-            onMomentumScrollEnd={handleCarouselScroll} // Update active index when scrolling ends
-            contentContainerStyle={styles.carouselList}
-            scrollEventThrottle={16}
-            initialScrollIndex={activeIndex}
-            getItemLayout={(data, index) => ({
-              length: windowWidth,
-              offset: windowWidth * index,
-              index,
-            })}
+            onMomentumScrollEnd={handleCarouselScroll}
           />
 
           <View style={styles.paginationContainer}>
@@ -262,16 +284,25 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "flex-end", // Changed from space-between to flex-end
+    justifyContent: "flex-end",
     alignItems: "center",
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#EEEEEE",
+    paddingHorizontal: 15,
+    paddingTop: 10,
+    backgroundColor: "#fff",
+    elevation: 2,
+    paddingBottom: 10,
   },
   headerIcons: {
     flexDirection: "row",
     alignItems: "center",
     gap: 15,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#F2994A",
+    position: "absolute",
+    left: 15,
   },
   cartContainer: {
     position: "relative",
@@ -297,6 +328,48 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   // Carousel Styles
+  carouselTextContainer: {
+    position: "absolute",
+    bottom: 30,
+    left: 20,
+    right: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 15,
+    borderRadius: 10,
+  },
+  carouselTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5,
+  },
+  carouselDescription: {
+    fontSize: 14,
+    color: "#fff",
+    marginBottom: 10,
+  },
+  carouselButton: {
+    backgroundColor: "#F2994A",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    alignSelf: "flex-start",
+  },
+  carouselButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  buyNowButton: {
+    marginTop: 10,
+    backgroundColor: "#F2994A",
+    paddingVertical: 8,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  buyNowText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
   carouselContainer: {
     height: 200,
     position: "relative",
