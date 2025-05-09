@@ -59,12 +59,12 @@ export default function BrandDetailScreen() {
         </TouchableOpacity>
         <View style={styles.profileHeader}>
           <Image
-            source={require("../../assets/deel-cover.png")}
+            source={require("../../assets/iveel.jpg")}
             style={styles.banner}
           />
           <View style={styles.profileInfo}>
             <Image
-              source={require("../../assets/dulguun.jpeg")}
+              source={require("../../assets/emegteitsamts.jpg")}
               style={styles.profileImage}
             />
             <Text style={styles.profileName}>{brand.name}</Text>

@@ -22,7 +22,7 @@ const PRODUCTS = [
     price: 149000,
     sizes: ["S", "M", "L", "XL"],
     colors: ["#000", "#69445c", "#d4915d", "#fff"],
-    image: require("../../assets/dulguun.jpeg"),
+    image: require("../../assets/michel.jpeg"), // Шинэ зураг
     description: "Үндэсний хээтэй, уламжлалт загвар. Торгон материал.",
     category: "deel",
   },
@@ -32,7 +32,7 @@ const PRODUCTS = [
     price: 199000,
     sizes: ["S", "M", "L"],
     colors: ["#000", "#392f54", "#724b3d"],
-    image: require("../../assets/deel-cover.png"),
+    image: require("../../assets/eregtei hurem.jpg"), // Шинэ зураг
     description: "Хөвсгөл нутгийн уламжлалт загвар.",
     category: "deel",
   },
@@ -42,7 +42,7 @@ const PRODUCTS = [
     price: 129000,
     sizes: ["37", "38", "39", "40", "41", "42"],
     colors: ["#000", "#392f54"],
-    image: require("../../assets/deel-cover.png"),
+    image: require("../../assets/mongolgutal.jpg"), // Шинэ зураг
     description: "Гар аргаар урласан, жинхэнэ арьсан монгол гутал.",
     category: "boots",
   },
@@ -51,7 +51,7 @@ const PRODUCTS = [
     name: "Оюухай",
     price: 39000,
     colors: ["#000", "#69445c", "#d4915d"],
-    image: require("../../assets/oyukhai.jpeg"),
+    image: require("../../assets/trad.jpeg"), // Шинэ зураг
     description: "Монгол уламжлалт дээл.",
     category: "deel",
   },
@@ -61,19 +61,19 @@ const PRODUCTS = [
 const CAROUSEL_IMAGES = [
   {
     id: "1",
-    image: require("../../assets/ca1.jpg"),
+    image: require("../../assets/new-carousel1.jpg"), // Шинэ зураг
     title: "Explore Mongolian Elegance",
     description: "Discover stylish and traditional outfits for any occasion.",
   },
   {
     id: "2",
-    image: require("../../assets/ca2.jpeg"),
+    image: require("../../assets/new-carousel2.jpg"), // Шинэ зураг
     title: "Handcrafted Perfection",
     description: "Unique designs made with passion and precision.",
   },
   {
     id: "3",
-    image: require("../../assets/deel-cover.png"),
+    image: require("../../assets/new-carousel3.jpg"), // Шинэ зураг
     title: "Celebrate Heritage",
     description: "Wear the beauty of Mongolian culture.",
   },
@@ -134,9 +134,9 @@ export default function ShopScreen() {
       <Text style={styles.productPrice}>₮{item.price.toLocaleString()}</Text>
       <TouchableOpacity
         style={styles.buyNowButton}
-        onPress={() => alert("Buy Now clicked!")}
+        onPress={() => alert("Худалдаж авах дарагдав!")}
       >
-        <Text style={styles.buyNowText}>Buy Now</Text>
+        <Text style={styles.buyNowText}>Худалдаж авах</Text>
       </TouchableOpacity>
     </TouchableOpacity>
   );

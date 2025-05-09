@@ -23,7 +23,7 @@ const PRODUCTS = [
     price: 149000,
     sizes: ["S", "M", "L", "XL"],
     colors: ["#000", "#69445c", "#d4915d", "#fff"],
-    images: ["../../assets/deel1.png"],
+    images: ["../../assets/aaaw.jpg"],
     description: "Үндэсний хээтэй, уламжлалт загвар. Торгон материал.",
   },
   {
@@ -32,7 +32,7 @@ const PRODUCTS = [
     price: 199000,
     sizes: ["S", "M", "L"],
     colors: ["#000", "#392f54", "#724b3d"],
-    images: ["../../assets/deel2.png"],
+    images: ["../../assets/eregtei hurem.jpg"],
     description: "Хөвсгөл нутгийн уламжлалт загвар.",
   },
   {
@@ -41,16 +41,16 @@ const PRODUCTS = [
     price: 129000,
     sizes: ["37", "38", "39", "40", "41", "42"],
     colors: ["#000", "#392f54"],
-    images: ["../../assets/boots.png"],
+    images: ["../../assets/mongolgutal.jpg"],
     description: "Гар аргаар урласан, жинхэнэ арьсан монгол гутал.",
   },
   {
     id: "4",
-    name: "Тоглоом",
+    name: "Толгойн гоёл",
     price: 39000,
     colors: ["#000", "#69445c", "#d4915d"],
-    images: ["../../assets/toy.png"],
-    description: "Монгол уламжлалт тоглоом.",
+    images: ["../../assets/trad.jpeg"],
+    description: "Монгол уламжлалт эмэгтэйчүүдийн үсний болон толгойн гоёл.",
   },
 ];
 
