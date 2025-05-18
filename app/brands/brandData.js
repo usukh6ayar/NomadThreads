@@ -11,6 +11,7 @@ export const brandDetails = {
     address: "Улаанбаатар, Чингэлтэй дүүрэг, 1-р хороо, Жишээ гудамж 12-1",
     workHours: "Да-Ба: 09:00 - 18:00",
     website: "https://borgolj.mn",
+    image: require("../../assets/trad.jpeg"),
   },
   zaya: {
     name: "Заяа",
@@ -21,6 +22,7 @@ export const brandDetails = {
     address: "УБ, Баянзүрх, 5-р хороо, 15-р байр",
     workHours: "Дав-Баа: 10:00 - 19:00",
     website: "https://zaya.mn",
+    image: require("../../assets/oyukhai.jpeg"),
   },
   munkhjin: {
     name: "Мөнхжин",
@@ -31,7 +33,7 @@ export const brandDetails = {
     address: "УБ, Сүхбаатар дүүрэг, 3-р хороо",
     workHours: "Да-Ба: 09:00 - 18:00",
     website: "https://munkhjin.mn",
-    image: require("../../assets/munkhjin.jpg"),
+    image: require("../../assets/aaaw.jpg"),
   },
   uyanga: {
     name: "Уянга",
@@ -42,7 +44,7 @@ export const brandDetails = {
     address: "УБ, Хан-Уул дүүрэг, 11-р хороо",
     workHours: "Да-Ня: 10:00 - 20:00",
     website: "https://uyanga.mn",
-    image: require("../../assets/uyanga.jpg"),
+    image: require("../../assets/michel.jpeg"),
   },
   nomad: {
     name: "Номад",
@@ -53,7 +55,7 @@ export const brandDetails = {
     address: "УБ, Сонгинохайрхан, 20-р хороо",
     workHours: "Да-Баа: 08:00 - 17:00",
     website: "https://nomad.mn",
-    image: require("../../assets/nomad.jpg"),
+    image: require("../../assets/mongol.jpeg"),
   },
   gobi: {
     name: "Говь",
@@ -64,6 +66,6 @@ export const brandDetails = {
     address: "УБ, Чингэлтэй дүүрэг, 4-р хороо",
     workHours: "Дав-Баа: 09:00 - 18:00",
     website: "https://gobi.mn",
-    image: require("../../assets/gobi.jpg"),
+    image: require("../../assets/oyukhai.jpeg"),
   },
 };

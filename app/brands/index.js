@@ -19,7 +19,7 @@ const brands = Object.keys(brandDetails).map((key) => ({
   id: key,
   name: brandDetails[key].name,
   short: brandDetails[key].short,
-  image: brandDetails[key].image, // зураг нэмэх
+  image: brandDetails[key].image,
 }));
 
 export default function BrandsScreen() {
@@ -33,7 +33,7 @@ export default function BrandsScreen() {
       {/* Зураг */}
       {item.image && (
         <Image
-          source={{ uri: item.image }}
+          source={item.image} // uri: хасаж, шууд image-ийг дамжуулна
           style={styles.brandImage}
           resizeMode="cover"
         />
