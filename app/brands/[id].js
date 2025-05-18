@@ -13,6 +13,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { brandDetails } from "./brandData";
 import { LinearGradient } from "expo-linear-gradient";
+import BackButton from "../../components/BackButton";
 
 export default function BrandDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -40,6 +41,28 @@ export default function BrandDetailScreen() {
     },
   ];
 
+  const renderComment = (comment, index) => (
+    <View key={index} style={styles.commentCard}>
+      <View style={styles.commentHeader}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <Ionicons name="person-circle" size={32} color="#F2994A" />
+          <View>
+            <Text style={styles.commentName}>{comment.name}</Text>
+            <Text style={{ color: "#636E72", fontSize: 12 }}>
+              2 өдрийн өмнө
+            </Text>
+          </View>
+        </View>
+        <View style={{ flexDirection: "row", gap: 2 }}>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Ionicons key={star} name="star" size={14} color="#FFB800" />
+          ))}
+        </View>
+      </View>
+      <Text style={styles.commentText}>{comment.text}</Text>
+    </View>
+  );
+
   if (!brand) {
     return (
       <View style={styles.container}>
@@ -49,14 +72,9 @@ export default function BrandDetailScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
+      <BackButton />
       <ScrollView contentContainerStyle={[styles.container]}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
         <View style={styles.profileHeader}>
           <Image
             source={require("../../assets/iveel.jpg")}
@@ -95,15 +113,7 @@ export default function BrandDetailScreen() {
         {/* Сэтгэгдлүүд */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Сэтгэгдлүүд</Text>
-          {comments.map((comment, index) => (
-            <View key={index} style={styles.commentCard}>
-              <View style={styles.commentHeader}>
-                <Ionicons name="person-circle" size={24} color="#888" />
-                <Text style={styles.commentName}>{comment.name}</Text>
-              </View>
-              <Text style={styles.commentText}>{comment.text}</Text>
-            </View>
-          ))}
+          {comments.map(renderComment)}
         </View>
       </ScrollView>
       {/* Холбоо барих хэсэг */}
@@ -129,31 +139,59 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
     paddingBottom: 100,
   },
+  profileHeader: {
+    marginBottom: 30,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
   banner: {
     width: "100%",
-    height: 200,
-    borderRadius: 12,
-    marginBottom: 24,
+    height: 220,
+    borderRadius: 0,
+  },
+  profileInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#fff",
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 3,
+    borderColor: "#F2994A",
+  },
+  profileName: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#2D3436",
+    marginLeft: 16,
   },
   section: {
     backgroundColor: "white",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#2c3e50",
-    marginBottom: 12,
-    paddingBottom: 8,
+    fontWeight: "800",
+    color: "#2D3436",
+    marginBottom: 16,
+    paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#ecf0f1",
+    borderBottomColor: "#F1F2F6",
   },
   sectionText: {
     fontSize: 14,
@@ -171,24 +209,28 @@ const styles = StyleSheet.create({
     color: "#7f8c8d",
   },
   commentCard: {
-    backgroundColor: "#f8f9fa",
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: "#F8F9FA",
+    borderRadius: 12,
+    padding: 16,
     marginVertical: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: "#F2994A",
   },
   commentHeader: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 8,
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 12,
   },
   commentName: {
-    fontWeight: "600",
-    color: "#2c3e50",
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#2D3436",
   },
   commentText: {
-    color: "#34495e",
+    color: "#636E72",
     fontSize: 14,
+    lineHeight: 20,
   },
   contactSection: {
     backgroundColor: "white",
@@ -210,41 +252,16 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "500",
   },
-  profileHeader: {
-    marginBottom: 24,
-  },
-  profileInfo: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    position: "absolute",
-    bottom: -10,
-    left: 20,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: "white",
-  },
-  profileName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2c3e50",
-    marginLeft: 16,
-    textShadowColor: "white",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
   fixedFooter: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
+    padding: 16,
+    paddingBottom: 32,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderTopWidth: 1,
+    borderTopColor: "#F1F2F6",
   },
   footerButton: {
     width: "100%",
@@ -255,24 +272,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   footerButtonText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
-  },
-
-  backButton: {
-    position: "absolute",
-    top: 40,
-    left: 20,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    borderRadius: 20,
-    padding: 8,
-    zIndex: 99, // ensure it stays above everything
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
 });

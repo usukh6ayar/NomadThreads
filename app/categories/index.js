@@ -61,33 +61,35 @@ export default function CategoriesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      {/* 🔍 Search Input */}
+
+      {/* Header */}
+      <Text style={styles.headerTitle}>Ангилал</Text>
+
+      {/* Search Input */}
       <View style={styles.searchWrapper}>
         <Ionicons
           name="search-outline"
-          size={20}
-          color="#888"
+          size={22}
+          color="#666"
           style={styles.searchIcon}
         />
         <TextInput
           style={styles.searchInput}
-          placeholder="Ангилал хайх..."
+          placeholder="Хайх..."
           value={search}
           onChangeText={setSearch}
-          placeholderTextColor="#aaa"
+          placeholderTextColor="#999"
         />
       </View>
 
-      {/* 🏷️ Header */}
-      <Text style={styles.headerTitle}>Ангилал</Text>
-
-      {/* 🧩 Grid */}
+      {/* Grid */}
       <FlatList
         data={filteredCategories}
         renderItem={renderCategoryItem}
         keyExtractor={(item) => item.id}
         numColumns={2}
         contentContainerStyle={styles.grid}
+        showsVerticalScrollIndicator={false}
       />
 
       <BottomTabs />
@@ -100,55 +102,87 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  searchWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F7",
+    margin: 16,
+    marginBottom: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
   searchInput: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 15,
     color: "#333",
+    paddingVertical: 2,
+  },
+  searchIcon: {
+    marginRight: 12,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 24,
+    fontWeight: "800",
     paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingBottom: 16,
+    color: "#1A1A1A",
   },
   grid: {
-    paddingHorizontal: 10,
-    paddingBottom: 80,
+    paddingHorizontal: 12,
+    paddingBottom: 100,
   },
   gridItem: {
     flex: 1,
-    margin: 10,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 12,
-    padding: 10,
+    margin: 8,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 12,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   imageGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
     width: "100%",
+    gap: 6,
   },
   gridImage: {
-    width: "47%",
-    height: 60,
+    width: "48%",
+    height: 70,
     marginBottom: 6,
-    borderRadius: 6,
-    backgroundColor: "#ddd",
+    borderRadius: 8,
+    backgroundColor: "#F5F5F7",
   },
   nameRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#F5F5F7",
+    width: "100%",
   },
   categoryName: {
     fontSize: 16,
     fontWeight: "600",
     marginRight: 6,
+    color: "#1A1A1A",
   },
   categoryCount: {
     fontSize: 14,
-    color: "#888",
+    color: "#666",
+    fontWeight: "500",
   },
   tabBar: {
     flexDirection: "row",
@@ -173,17 +207,5 @@ const styles = StyleSheet.create({
     color: "#F2994A",
     fontWeight: "bold",
     marginTop: 2,
-  },
-  searchWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f2f2f2",
-    margin: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 10,
-  },
-  searchIcon: {
-    marginRight: 8,
   },
 });

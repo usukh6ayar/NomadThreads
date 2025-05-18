@@ -13,6 +13,7 @@ import {
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import BottomTabs from "../../components/BottomTabs";
+import { LinearGradient } from "expo-linear-gradient";
 
 // Mock data for the products
 const PRODUCTS = [
@@ -61,19 +62,19 @@ const PRODUCTS = [
 const CAROUSEL_IMAGES = [
   {
     id: "1",
-    image: require("../../assets/new-carousel1.jpg"), // Шинэ зураг
+    image: require("../../assets/ca1.jpg"),
     title: "Explore Mongolian Elegance",
     description: "Discover stylish and traditional outfits for any occasion.",
   },
   {
     id: "2",
-    image: require("../../assets/new-carousel2.jpg"), // Шинэ зураг
+    image: require("../../assets/ca2.jpeg"),
     title: "Handcrafted Perfection",
     description: "Unique designs made with passion and precision.",
   },
   {
     id: "3",
-    image: require("../../assets/new-carousel3.jpg"), // Шинэ зураг
+    image: require("../../assets/ca1.jpg"),
     title: "Celebrate Heritage",
     description: "Wear the beauty of Mongolian culture.",
   },
@@ -148,16 +149,26 @@ export default function ShopScreen() {
         style={styles.carouselImage}
         resizeMode="cover"
       />
-      <View style={styles.carouselTextContainer}>
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.8)"]}
+        style={styles.carouselTextContainer}
+      >
         <Text style={styles.carouselTitle}>{item.title}</Text>
         <Text style={styles.carouselDescription}>{item.description}</Text>
         <TouchableOpacity
           style={styles.carouselButton}
           onPress={() => alert("Explore clicked!")}
         >
-          <Text style={styles.carouselButtonText}>Explore</Text>
+          <Text
+            style={[
+              styles.carouselButtonText,
+              { fontSize: 16, fontWeight: "600" },
+            ]}
+          >
+            Explore Now
+          </Text>
         </TouchableOpacity>
-      </View>
+      </LinearGradient>
     </View>
   );
 
@@ -222,6 +233,10 @@ export default function ShopScreen() {
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={handleCarouselScroll}
+            decelerationRate="fast"
+            snapToAlignment="center"
+            snapToInterval={windowWidth}
+            bounces={false}
           />
 
           <View style={styles.paginationContainer}>
@@ -284,25 +299,25 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 15,
-    paddingTop: 10,
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    paddingBottom: 15,
     backgroundColor: "#fff",
-    elevation: 2,
-    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.05)",
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#F2994A",
+    letterSpacing: -0.5,
   },
   headerIcons: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#F2994A",
-    position: "absolute",
-    left: 15,
+    gap: 20,
   },
   cartContainer: {
     position: "relative",
@@ -312,137 +327,133 @@ const styles = StyleSheet.create({
     right: -8,
     top: -8,
     backgroundColor: "#F2994A",
-    borderRadius: 10,
+    borderRadius: 12,
     minWidth: 20,
     height: 20,
     justifyContent: "center",
     alignItems: "center",
-  },
-  cartBadgeText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
-    paddingHorizontal: 5,
+    borderWidth: 2,
+    borderColor: "#fff",
   },
   scrollView: {
     flex: 1,
   },
   // Carousel Styles
-  carouselTextContainer: {
-    position: "absolute",
-    bottom: 30,
-    left: 20,
-    right: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 15,
-    borderRadius: 10,
-  },
-  carouselTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 5,
-  },
-  carouselDescription: {
-    fontSize: 14,
-    color: "#fff",
-    marginBottom: 10,
-  },
-  carouselButton: {
-    backgroundColor: "#F2994A",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    alignSelf: "flex-start",
-  },
-  carouselButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  buyNowButton: {
-    marginTop: 10,
-    backgroundColor: "#F2994A",
-    paddingVertical: 8,
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  buyNowText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
   carouselContainer: {
-    height: 200,
+    height: 260,
     position: "relative",
-  },
-  carouselList: {
-    height: 200,
+    marginBottom: 20,
   },
   carouselItem: {
-    height: 200,
-    justifyContent: "center",
-    alignItems: "center",
+    height: 260,
+    position: "relative",
   },
   carouselImage: {
     width: "100%",
     height: "100%",
+    borderRadius: 0,
+  },
+  carouselTextContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 25,
+    background:
+      "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
+    paddingTop: 60,
+  },
+  carouselTitle: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: "#fff",
+    marginBottom: 8,
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  carouselDescription: {
+    fontSize: 16,
+    color: "rgba(255, 255, 255, 0.9)",
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  carouselButton: {
+    backgroundColor: "#F2994A",
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 30,
+    alignSelf: "flex-start",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   paginationContainer: {
     flexDirection: "row",
     position: "absolute",
-    bottom: 10,
-    alignSelf: "center",
+    bottom: 25,
+    right: 25,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    borderRadius: 20,
+    padding: 10,
   },
   paginationDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
     marginHorizontal: 4,
+    transition: "all 0.3s ease",
   },
   paginationDotActive: {
-    backgroundColor: "#fff",
+    width: 24,
+    backgroundColor: "#F2994A",
   },
   // Recommended Section Styles
   recommendedSection: {
-    marginVertical: 15,
+    marginVertical: 20,
+    paddingTop: 10,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 15,
-    marginBottom: 10,
+    paddingHorizontal: 20,
+    marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginHorizontal: 15,
-    marginVertical: 10,
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#222",
   },
   seeAllText: {
     color: "#F2994A",
-    fontWeight: "500",
+    fontWeight: "600",
+    fontSize: 14,
   },
   horizontalProductsContainer: {
     paddingHorizontal: 10,
   },
   horizontalProductCard: {
-    width: 140,
-    marginHorizontal: 5,
+    width: 160,
+    marginHorizontal: 8,
     backgroundColor: "#FFF",
-    borderRadius: 10,
-    padding: 5,
+    borderRadius: 12,
+    padding: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowRadius: 8,
+    elevation: 4,
   },
   horizontalImageContainer: {
-    height: 140,
+    height: 160,
     borderRadius: 8,
-    marginBottom: 5,
+    marginBottom: 8,
     backgroundColor: "#F5F5F5",
+    overflow: "hidden",
   },
   horizontalProductImage: {
     width: "100%",
