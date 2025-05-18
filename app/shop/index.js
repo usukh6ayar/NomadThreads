@@ -9,9 +9,10 @@ import {
   SafeAreaView,
   ScrollView,
   Dimensions,
+  Pressable,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import BottomTabs from "../../components/BottomTabs";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -23,7 +24,7 @@ const PRODUCTS = [
     price: 149000,
     sizes: ["S", "M", "L", "XL"],
     colors: ["#000", "#69445c", "#d4915d", "#fff"],
-    image: require("../../assets/michel.jpeg"), // Шинэ зураг
+    image: require("../../assets/michel.jpeg"),
     description: "Үндэсний хээтэй, уламжлалт загвар. Торгон материал.",
     category: "deel",
   },
@@ -33,7 +34,7 @@ const PRODUCTS = [
     price: 199000,
     sizes: ["S", "M", "L"],
     colors: ["#000", "#392f54", "#724b3d"],
-    image: require("../../assets/eregtei hurem.jpg"), // Шинэ зураг
+    image: require("../../assets/eregtei hurem.jpg"),
     description: "Хөвсгөл нутгийн уламжлалт загвар.",
     category: "deel",
   },
@@ -43,7 +44,7 @@ const PRODUCTS = [
     price: 129000,
     sizes: ["37", "38", "39", "40", "41", "42"],
     colors: ["#000", "#392f54"],
-    image: require("../../assets/mongolgutal.jpg"), // Шинэ зураг
+    image: require("../../assets/mongolgutal.jpg"),
     description: "Гар аргаар урласан, жинхэнэ арьсан монгол гутал.",
     category: "boots",
   },
@@ -52,7 +53,7 @@ const PRODUCTS = [
     name: "Оюухай",
     price: 39000,
     colors: ["#000", "#69445c", "#d4915d"],
-    image: require("../../assets/trad.jpeg"), // Шинэ зураг
+    image: require("../../assets/trad.jpeg"),
     description: "Монгол уламжлалт дээл.",
     category: "deel",
   },
@@ -80,20 +81,54 @@ const CAROUSEL_IMAGES = [
   },
 ];
 
+// Figma Product Detail UI constants
+const MATERIALS = ["Торго", "Даавуу"];
+const ETHNICITIES = ["Халх", "Хүннү", "Буриад"];
+const SIZES = ["XS", "S", "M", "L", "XL"];
+const COLORS = [
+  { name: "Улаан", code: "#D32F2F" },
+  { name: "Шар", code: "#ECA61B" },
+  { name: "Цэнхэр", code: "#1976D2" },
+  { name: "Ногоон", code: "#388E3C" },
+];
+const SIMILAR_PRODUCTS = [
+  { id: "2", image: require("../../assets/deel-cover.png") },
+  { id: "3", image: require("../../assets/deel-cover.png") },
+  { id: "4", image: require("../../assets/deel-cover.png") },
+];
+
 export default function ShopScreen() {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [cartItems, setCartItems] = useState([]); // Added state for cart items
+  const [cartItems, setCartItems] = useState([]);
   const windowWidth = Dimensions.get("window").width;
   const carouselRef = useRef(null);
+
+  // Figma Product Detail states
+  const [showProductDetail, setShowProductDetail] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [favorite, setFavorite] = useState(false);
+  const [material, setMaterial] = useState(MATERIALS[0]);
+  const [ethnicity, setEthnicity] = useState(ETHNICITIES[0]);
+  const [size, setSize] = useState(SIZES[2]);
+  const [color, setColor] = useState(COLORS[0].code);
+  const [rating, setRating] = useState(4);
+
+  // Dummy review
+  const review = {
+    user: {
+      name: "Анужин",
+      avatar: require("../../assets/avatar.png"),
+    },
+    rating: 4,
+    comment: "Маш гоё материалтай, биед эвтэйхэн байна!",
+  };
 
   // Carousel auto-scroll functionality
   useEffect(() => {
     const interval = setInterval(() => {
       const nextIndex = (activeIndex + 1) % CAROUSEL_IMAGES.length;
       setActiveIndex(nextIndex);
-
-      // Manually scroll the FlatList to the next item
       if (carouselRef.current) {
         carouselRef.current.scrollToIndex({
           index: nextIndex,
@@ -101,25 +136,207 @@ export default function ShopScreen() {
         });
       }
     }, 3000);
-
     return () => clearInterval(interval);
   }, [activeIndex]);
 
-  // Handle scroll event for the carousel
   const handleCarouselScroll = (event) => {
     const slideWidth = windowWidth;
     const offset = event.nativeEvent.contentOffset.x;
     const index = Math.round(offset / slideWidth);
-
-    if (index !== activeIndex) {
-      setActiveIndex(index);
-    }
+    if (index !== activeIndex) setActiveIndex(index);
   };
 
+  const openProductDetail = (item) => {
+    setSelectedProduct(item);
+    setShowProductDetail(true);
+    setFavorite(false);
+    setMaterial(MATERIALS[0]);
+    setEthnicity(ETHNICITIES[0]);
+    setSize(SIZES[2]);
+    setColor(COLORS[0].code);
+    setRating(4);
+  };
+
+  // --- Product Detail Figma UI ---
+  const ProductDetail = ({ product }) => (
+    <ScrollView style={styles.detailContainer}>
+      <Image source={product.image} style={styles.detailImage} />
+      <View style={styles.detailInfo}>
+        <View style={styles.detailRowBetween}>
+          <Text style={styles.detailName}>{product.name}</Text>
+          <TouchableOpacity onPress={() => setFavorite((f) => !f)}>
+            <AntDesign
+              name={favorite ? "heart" : "hearto"}
+              size={28}
+              color={favorite ? "#D32F2F" : "#bbb"}
+            />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.detailPrice}>₮{product.price.toLocaleString()}</Text>
+        <Text style={styles.detailDesc}>{product.description}</Text>
+
+        <Text style={styles.detailSectionTitle}>Үзүүлэлтүүд</Text>
+        <Text style={styles.detailSubTitle}>Material</Text>
+        <View style={styles.detailRow}>
+          {MATERIALS.map((m) => (
+            <Pressable
+              key={m}
+              style={[
+                styles.detailChip,
+                material === m && styles.detailChipSelected,
+              ]}
+              onPress={() => setMaterial(m)}
+            >
+              <Text style={material === m ? styles.detailChipTextSelected : styles.detailChipText}>
+                {m}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={styles.detailSubTitle}>Үндэстэн</Text>
+        <View style={styles.detailRow}>
+          {ETHNICITIES.map((e) => (
+            <Pressable
+              key={e}
+              style={[
+                styles.detailChip,
+                ethnicity === e && styles.detailChipSelected,
+              ]}
+              onPress={() => setEthnicity(e)}
+            >
+              <Text style={ethnicity === e ? styles.detailChipTextSelected : styles.detailChipText}>
+                {e}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={styles.detailSubTitle}>Size</Text>
+        <View style={styles.detailRow}>
+          {SIZES.map((s) => (
+            <Pressable
+              key={s}
+              style={[
+                styles.detailSizeBtn,
+                size === s && styles.detailSizeBtnSelected,
+              ]}
+              onPress={() => setSize(s)}
+            >
+              <Text style={size === s ? styles.detailSizeTextSelected : styles.detailSizeText}>
+                {s}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={styles.detailSubTitle}>Color</Text>
+        <View style={styles.detailRow}>
+          {COLORS.map((c) => (
+            <Pressable
+              key={c.code}
+              style={[
+                styles.detailColorCircle,
+                color === c.code && styles.detailColorCircleSelected,
+                { backgroundColor: c.code },
+              ]}
+              onPress={() => setColor(c.code)}
+            />
+          ))}
+        </View>
+        <Text style={styles.detailSectionTitle}>Үнэлгээ & Сэтгэгдэл</Text>
+        <View style={styles.detailRow}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <TouchableOpacity key={i} onPress={() => setRating(i)}>
+              <AntDesign
+                name={i <= rating ? "star" : "staro"}
+                size={28}
+                color="#ECA61B"
+                style={{ marginRight: 4 }}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.detailReviewContainer}>
+          <Image source={review.user.avatar} style={styles.detailAvatar} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.detailReviewerName}>{review.user.name}</Text>
+            <View style={styles.detailRow}>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <AntDesign
+                  key={i}
+                  name={i <= review.rating ? "star" : "staro"}
+                  size={18}
+                  color="#ECA61B"
+                />
+              ))}
+            </View>
+            <Text style={styles.detailReviewText}>{review.comment}</Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.detailAllReviewsBtn}>
+          <Text style={styles.detailAllReviewsText}>Бүх сэтгэгдлийг үзэх</Text>
+        </TouchableOpacity>
+        <Text style={styles.detailSectionTitle}>Төстэй бараанууд</Text>
+        <FlatList
+          data={SIMILAR_PRODUCTS}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.detailSimilarProduct}
+              onPress={() => openProductDetail(item)}
+            >
+              <Image source={item.image} style={styles.detailSimilarImage} />
+            </TouchableOpacity>
+          )}
+        />
+        <View style={styles.detailBottomButtons}>
+          <TouchableOpacity
+            style={styles.detailGradientBtn}
+            onPress={() => {/* Add to cart logic */}}
+          >
+            <LinearGradient
+              colors={["#ECA61B", "#D32F2F"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.detailGradient}
+            >
+              <Text style={styles.detailGradientBtnText}>Сагсанд нэмэх</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.detailGradientBtn}
+            onPress={() => router.push("/shop/checkout")}
+          >
+            <LinearGradient
+              colors={["#ECA61B", "#D32F2F"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.detailGradient}
+            >
+              <Text style={styles.detailGradientBtnText}>Шууд худалдаж авах</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={styles.detailBackBtn}
+          onPress={() => setShowProductDetail(false)}
+        >
+          <Text style={styles.detailBackBtnText}>← Буцах</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+
+  // --- Main ShopScreen Render ---
+  if (showProductDetail && selectedProduct) {
+    return <ProductDetail product={selectedProduct} />;
+  }
+
+  // --- Main Shop List UI ---
   const renderProductItem = ({ item }) => (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => router.push(`/shop/${item.id}`)}
+      onPress={() => openProductDetail(item)}
     >
       <View style={styles.imageContainer}>
         <Image
@@ -135,7 +352,7 @@ export default function ShopScreen() {
       <Text style={styles.productPrice}>₮{item.price.toLocaleString()}</Text>
       <TouchableOpacity
         style={styles.buyNowButton}
-        onPress={() => alert("Худалдаж авах дарагдав!")}
+        onPress={() => openProductDetail(item)}
       >
         <Text style={styles.buyNowText}>Худалдаж авах</Text>
       </TouchableOpacity>
@@ -175,7 +392,7 @@ export default function ShopScreen() {
   const renderHorizontalProduct = ({ item }) => (
     <TouchableOpacity
       style={styles.horizontalProductCard}
-      onPress={() => router.push(`/shop/${item.id}`)}
+      onPress={() => openProductDetail(item)}
     >
       <View style={styles.horizontalImageContainer}>
         <Image
@@ -292,11 +509,10 @@ export default function ShopScreen() {
   );
 }
 
+// ...existing styles...
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
+  // --- Main Shop List Styles ---
+  container: { flex: 1, backgroundColor: "#fff" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -314,14 +530,8 @@ const styles = StyleSheet.create({
     color: "#F2994A",
     letterSpacing: -0.5,
   },
-  headerIcons: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 20,
-  },
-  cartContainer: {
-    position: "relative",
-  },
+  headerIcons: { flexDirection: "row", alignItems: "center", gap: 20 },
+  cartContainer: { position: "relative" },
   cartBadge: {
     position: "absolute",
     right: -8,
@@ -335,32 +545,16 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#fff",
   },
-  scrollView: {
-    flex: 1,
-  },
-  // Carousel Styles
-  carouselContainer: {
-    height: 260,
-    position: "relative",
-    marginBottom: 20,
-  },
-  carouselItem: {
-    height: 260,
-    position: "relative",
-  },
-  carouselImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 0,
-  },
+  scrollView: { flex: 1 },
+  carouselContainer: { height: 260, position: "relative", marginBottom: 20 },
+  carouselItem: { height: 260, position: "relative" },
+  carouselImage: { width: "100%", height: "100%", borderRadius: 0 },
   carouselTextContainer: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     padding: 25,
-    background:
-      "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
     paddingTop: 60,
   },
   carouselTitle: {
@@ -405,17 +599,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: "rgba(255, 255, 255, 0.4)",
     marginHorizontal: 4,
-    transition: "all 0.3s ease",
   },
-  paginationDotActive: {
-    width: 24,
-    backgroundColor: "#F2994A",
-  },
-  // Recommended Section Styles
-  recommendedSection: {
-    marginVertical: 20,
-    paddingTop: 10,
-  },
+  paginationDotActive: { width: 24, backgroundColor: "#F2994A" },
+  recommendedSection: { marginVertical: 20, paddingTop: 10 },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -423,19 +609,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 15,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#222",
-  },
-  seeAllText: {
-    color: "#F2994A",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  horizontalProductsContainer: {
-    paddingHorizontal: 10,
-  },
+  sectionTitle: { fontSize: 20, fontWeight: "700", color: "#222" },
+  seeAllText: { color: "#F2994A", fontWeight: "600", fontSize: 14 },
+  horizontalProductsContainer: { paddingHorizontal: 10 },
   horizontalProductCard: {
     width: 160,
     marginHorizontal: 8,
@@ -455,30 +631,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
     overflow: "hidden",
   },
-  horizontalProductImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 8,
-  },
-  horizontalProductName: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
+  horizontalProductImage: { width: "100%", height: "100%", borderRadius: 8 },
+  horizontalProductName: { fontSize: 14, fontWeight: "500" },
   horizontalProductPrice: {
     fontSize: 14,
     fontWeight: "bold",
     marginTop: 3,
     color: "#F2994A",
   },
-  // All Products Section
-  allProductsSection: {
-    marginTop: 5,
-    marginBottom: 20,
-  },
-  productsContainer: {
-    paddingHorizontal: 7,
-    paddingBottom: 20,
-  },
+  allProductsSection: { marginTop: 5, marginBottom: 20 },
+  productsContainer: { paddingHorizontal: 7, paddingBottom: 20 },
   productCard: {
     flex: 1,
     margin: 8,
@@ -498,11 +660,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     backgroundColor: "#F5F5F5",
   },
-  productImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 8,
-  },
+  productImage: { width: "100%", height: "100%", borderRadius: 8 },
   favoriteButton: {
     position: "absolute",
     top: 8,
@@ -511,38 +669,135 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 5,
   },
-  productName: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
+  productName: { fontSize: 16, fontWeight: "500" },
   productPrice: {
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 5,
     color: "#F2994A",
   },
-  tabBar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    borderTopWidth: 1,
-    borderTopColor: "#EEEEEE",
+  buyNowButton: {
+    marginTop: 10,
+    backgroundColor: "#F2994A",
+    borderRadius: 8,
     paddingVertical: 10,
-  },
-  tabItem: {
     alignItems: "center",
   },
-  activeTab: {
-    borderTopColor: "#F2994A",
+  buyNowText: { color: "#fff", fontWeight: "bold", fontSize: 15 },
+  // --- Figma Product Detail Styles ---
+  detailContainer: { flex: 1, backgroundColor: "#fff" },
+  detailImage: { width: "100%", height: 320, resizeMode: "cover" },
+  detailInfo: { padding: 20 },
+  detailRow: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
+  detailRowBetween: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
   },
-  tabText: {
-    fontSize: 12,
-    color: "#999",
-    marginTop: 2,
-  },
-  activeTabText: {
-    fontSize: 12,
+  detailName: { fontSize: 22, fontWeight: "bold" },
+  detailPrice: {
+    fontSize: 20,
     color: "#F2994A",
     fontWeight: "bold",
-    marginTop: 2,
+    marginBottom: 12,
   },
+  detailDesc: { fontSize: 16, color: "#444", marginBottom: 24 },
+  detailSectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 24,
+    marginBottom: 8,
+  },
+  detailSubTitle: { fontSize: 15, fontWeight: "600", marginBottom: 8, color: "#888" },
+  detailChip: {
+    borderWidth: 1,
+    borderColor: "#ECA61B",
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 18,
+    marginRight: 10,
+    backgroundColor: "#fff",
+  },
+  detailChipSelected: { backgroundColor: "#ECA61B", borderColor: "#ECA61B" },
+  detailChipText: { color: "#ECA61B", fontWeight: "bold" },
+  detailChipTextSelected: { color: "#fff", fontWeight: "bold" },
+  detailSizeBtn: {
+    borderWidth: 1,
+    borderColor: "#bbb",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    marginRight: 10,
+    backgroundColor: "#fff",
+  },
+  detailSizeBtnSelected: { backgroundColor: "#ECA61B", borderColor: "#ECA61B" },
+  detailSizeText: { color: "#444", fontWeight: "bold" },
+  detailSizeTextSelected: { color: "#fff", fontWeight: "bold" },
+  detailColorCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginRight: 12,
+    borderWidth: 2,
+    borderColor: "#eee",
+  },
+  detailColorCircleSelected: { borderColor: "#ECA61B", borderWidth: 3 },
+  detailReviewContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  detailAvatar: { width: 44, height: 44, borderRadius: 22, marginRight: 12 },
+  detailReviewerName: { fontWeight: "bold", fontSize: 15, marginBottom: 2 },
+  detailReviewText: { fontSize: 15, color: "#444", marginTop: 4 },
+  detailAllReviewsBtn: {
+    marginTop: 8,
+    marginBottom: 16,
+    alignSelf: "flex-start",
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    backgroundColor: "#F5F5F5",
+  },
+  detailAllReviewsText: { color: "#ECA61B", fontWeight: "bold" },
+  detailSimilarProduct: {
+    marginRight: 16,
+    borderRadius: 12,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#eee",
+    width: 100,
+    height: 120,
+  },
+  detailSimilarImage: { width: "100%", height: "100%", resizeMode: "cover" },
+  detailBottomButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 32,
+    marginBottom: 24,
+  },
+  detailGradientBtn: {
+    flex: 1,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  detailGradient: { paddingVertical: 16, alignItems: "center", borderRadius: 8 },
+  detailGradientBtnText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+    letterSpacing: 1,
+  },
+  detailBackBtn: {
+    marginTop: 10,
+    alignSelf: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 20,
+    backgroundColor: "#F5F5F5",
+  },
+  detailBackBtnText: { color: "#ECA61B", fontWeight: "bold", fontSize: 16 },
 });
