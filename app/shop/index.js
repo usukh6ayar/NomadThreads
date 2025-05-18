@@ -10,6 +10,7 @@ import {
   ScrollView,
   Dimensions,
   Pressable,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
@@ -126,17 +127,26 @@ export default function ShopScreen() {
 
   // Carousel auto-scroll functionality
   useEffect(() => {
+    let isMounted = true;
     const interval = setInterval(() => {
-      const nextIndex = (activeIndex + 1) % CAROUSEL_IMAGES.length;
-      setActiveIndex(nextIndex);
-      if (carouselRef.current) {
-        carouselRef.current.scrollToIndex({
-          index: nextIndex,
-          animated: true,
-        });
+      if (isMounted) {
+        const nextIndex = (activeIndex + 1) % CAROUSEL_IMAGES.length;
+        setActiveIndex(nextIndex);
+        if (carouselRef.current) {
+          carouselRef.current.scrollToIndex({
+            index: nextIndex,
+            animated: true,
+            viewPosition: 0,
+            viewOffset: 0,
+          });
+        }
       }
     }, 3000);
-    return () => clearInterval(interval);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [activeIndex]);
 
   const handleCarouselScroll = (event) => {
@@ -311,7 +321,7 @@ export default function ShopScreen() {
         />
         <View style={styles.detailBottomButtons}>
           <TouchableOpacity
-            style={styles.detailGradientBtn}
+            style={[styles.detailGradientBtn, { flex: 1 }]}
             onPress={() => {
               /* Add to cart logic */
             }}
@@ -326,7 +336,7 @@ export default function ShopScreen() {
             </LinearGradient>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.detailGradientBtn}
+            style={[styles.detailGradientBtn, { flex: 1.2 }]}
             onPress={() => router.push("/shop/checkout")}
           >
             <LinearGradient
@@ -335,9 +345,7 @@ export default function ShopScreen() {
               end={{ x: 1, y: 0 }}
               style={styles.detailGradient}
             >
-              <Text style={styles.detailGradientBtnText}>
-                Шууд худалдаж авах
-              </Text>
+              <Text style={styles.detailGradientBtnText}>Худалдаж авах</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -389,6 +397,8 @@ export default function ShopScreen() {
         source={item.image}
         style={styles.carouselImage}
         resizeMode="cover"
+        loading="lazy"
+        progressiveRenderingEnabled={true}
       />
       <LinearGradient
         colors={["transparent", "rgba(0,0,0,0.8)"]}
@@ -462,6 +472,13 @@ export default function ShopScreen() {
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+          autoscrollToTopThreshold: 10,
+        }}
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Carousel Section */}
         <View style={styles.carouselContainer}>
@@ -478,6 +495,16 @@ export default function ShopScreen() {
             snapToAlignment="center"
             snapToInterval={windowWidth}
             bounces={false}
+            overScrollMode="never"
+            removeClippedSubviews={true}
+            initialNumToRender={1}
+            maxToRenderPerBatch={1}
+            windowSize={2}
+            getItemLayout={(data, index) => ({
+              length: windowWidth,
+              offset: windowWidth * index,
+              index,
+            })}
           />
 
           <View style={styles.paginationContainer}>
@@ -511,6 +538,8 @@ export default function ShopScreen() {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.horizontalProductsContainer}
+            bounces={false}
+            overScrollMode="never"
           />
         </View>
 
@@ -524,6 +553,8 @@ export default function ShopScreen() {
             numColumns={2}
             scrollEnabled={false}
             contentContainerStyle={styles.productsContainer}
+            bounces={false}
+            overScrollMode="never"
           />
         </View>
       </ScrollView>
@@ -803,26 +834,42 @@ const styles = StyleSheet.create({
   detailSimilarImage: { width: "100%", height: "100%", resizeMode: "cover" },
   detailBottomButtons: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 32,
-    marginBottom: 24,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "white",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingBottom: Platform.OS === "ios" ? 30 : 12,
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -3,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 10,
   },
   detailGradientBtn: {
-    flex: 1,
-    marginHorizontal: 4,
-    borderRadius: 8,
+    marginHorizontal: 6,
+    borderRadius: 12,
     overflow: "hidden",
+    minHeight: 50,
   },
   detailGradient: {
+    flex: 1,
     paddingVertical: 16,
     alignItems: "center",
-    borderRadius: 8,
+    justifyContent: "center",
   },
   detailGradientBtnText: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 16,
-    letterSpacing: 1,
+    fontSize: 15,
+    letterSpacing: 0.5,
   },
   detailBackBtn: {
     marginTop: 10,
