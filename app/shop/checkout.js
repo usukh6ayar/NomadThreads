@@ -192,8 +192,8 @@ export default function CheckoutScreen() {
         <TouchableOpacity
           style={styles.confirmButton}
           onPress={() => {
-            // Here you would process the order
-            router.replace("/shop/confirmation");
+            // Хүргэлтийн байршил сонгох дэлгэц рүү шилжих
+            router.push("/shop/delivery-location");
           }}
         >
           <Text style={styles.confirmButtonText}>Захиалга баталгаажуулах</Text>
