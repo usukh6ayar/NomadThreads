@@ -14,41 +14,66 @@ import { Stack } from "expo-router";
 import { useState } from "react";
 import BottomTabs from "../../components/BottomTabs";
 
+// Ангилал бүрийн зурагнууд
+const categoryImages = {
+  deel: [
+    require("../../assets/deel_a1.jpg"),
+    require("../../assets/deel_a2.jpg"),
+    require("../../assets/deel_a3.jpg"),
+  ],
+  tsamts: [
+    require("../../assets/tsamts_a1.jpg"),
+    require("../../assets/tsamts_a2.jpg"),
+    require("../../assets/tsamts_a3.jpg"),
+  ],
+  accessories: [
+    require("../../assets/tolgoin_goyl_a1.jpg"),
+    require("../../assets/tolgoin_goyl_a2.jpg"),
+    require("../../assets/tolgoin_goyl_a3.jpg"),
+  ],
+  khurem: [
+    require("../../assets/hurem_a1.jpg"),
+    require("../../assets/hurem_a2.jpg"),
+    require("../../assets/hurem_a3.jpg"),
+  ],
+};
+
 const categories = [
   { id: "deel", name: "Дээл", icon: "shirt-outline", count: 24 },
-  { id: "boots", name: "Гутал", icon: "footsteps-outline", count: 16 },
+  { id: "tsamts", name: "Цамц", icon: "footsteps-outline", count: 16 },
   {
     id: "accessories",
-    name: "Гоёл чимэглэл",
+    name: "Гоёлын хэрэгсэл",
     icon: "diamond-outline",
     count: 32,
   },
-  { id: "gifts", name: "Бэлэг дурсгал", icon: "gift-outline", count: 20 },
-];
-
-const sampleImages = [
-  "https://via.placeholder.com/70",
-  "https://via.placeholder.com/70",
-  "https://via.placeholder.com/70",
-  "https://via.placeholder.com/70",
+  { id: "khurem", name: "Хүрэм", icon: "gift-outline", count: 20 },
 ];
 
 export default function CategoriesScreen() {
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const filteredCategories = categories.filter((cat) =>
     cat.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Ангилал дээр дарахад тухайн ангиллын бүтээгдэхүүнүүдийг харуулах
+  const handleCategoryPress = (categoryId) => {
+    setSelectedCategory(categoryId);
+    // router.push(`/categories/${categoryId}`); // Хэрвээ дэлгэрэнгүй хуудас руу үсрэх бол
+  };
+
+  // Ангилалын button
   const renderCategoryItem = ({ item }) => (
     <TouchableOpacity
       style={styles.gridItem}
-      onPress={() => router.push(`/categories/${item.id}`)}
+      onPress={() => handleCategoryPress(item.id)}
     >
       <View style={styles.imageGrid}>
-        {sampleImages.map((img, index) => (
-          <Image key={index} source={{ uri: img }} style={styles.gridImage} />
+        {categoryImages[item.id].map((img, index) => (
+          <Image key={index} source={img} style={styles.gridImage} />
         ))}
       </View>
       <View style={styles.nameRow}>
@@ -58,14 +83,31 @@ export default function CategoriesScreen() {
     </TouchableOpacity>
   );
 
+  // Сонгогдсон ангиллын бүтээгдэхүүнүүдийг харуулах (жишээ)
+  const renderSelectedCategory = () => {
+    if (!selectedCategory) return null;
+    return (
+      <View style={{ margin: 16 }}>
+        <Text style={{ fontWeight: "bold", fontSize: 18, marginBottom: 8 }}>
+          {categories.find((c) => c.id === selectedCategory)?.name}
+        </Text>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          {categoryImages[selectedCategory].map((img, idx) => (
+            <Image
+              key={idx}
+              source={img}
+              style={{ width: 100, height: 100, borderRadius: 8, margin: 4 }}
+            />
+          ))}
+        </View>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-
-      {/* Header */}
       <Text style={styles.headerTitle}>Ангилал</Text>
-
-      {/* Search Input */}
       <View style={styles.searchWrapper}>
         <Ionicons
           name="search-outline"
@@ -81,8 +123,9 @@ export default function CategoriesScreen() {
           placeholderTextColor="#999"
         />
       </View>
-
-      {/* Grid */}
+      {/* Сонгогдсон ангиллын бүтээгдэхүүнүүд */}
+      {renderSelectedCategory()}
+      {/* Ангиллын grid */}
       <FlatList
         data={filteredCategories}
         renderItem={renderCategoryItem}
@@ -91,7 +134,6 @@ export default function CategoriesScreen() {
         contentContainerStyle={styles.grid}
         showsVerticalScrollIndicator={false}
       />
-
       <BottomTabs />
     </SafeAreaView>
   );

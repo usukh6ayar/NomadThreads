@@ -19,6 +19,7 @@ const brands = Object.keys(brandDetails).map((key) => ({
   id: key,
   name: brandDetails[key].name,
   short: brandDetails[key].short,
+  image: brandDetails[key].image, // зураг нэмэх
 }));
 
 export default function BrandsScreen() {
@@ -29,6 +30,14 @@ export default function BrandsScreen() {
       style={styles.brandCard}
       onPress={() => router.push(`/brands/${item.id}`)}
     >
+      {/* Зураг */}
+      {item.image && (
+        <Image
+          source={{ uri: item.image }}
+          style={styles.brandImage}
+          resizeMode="cover"
+        />
+      )}
       <View style={styles.brandInfo}>
         <Text style={styles.brandName}>{item.name}</Text>
         <Text style={styles.brandDescription}>{item.short}</Text>
@@ -101,6 +110,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
+  },
+  brandImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    marginRight: 16,
+    backgroundColor: "#f0f0f0",
   },
   brandInfo: {
     flex: 1,
