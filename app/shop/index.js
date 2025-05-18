@@ -569,7 +569,6 @@ export default function ShopScreen() {
   );
 }
 
-// ...existing styles...
 const styles = StyleSheet.create({
   // --- Main Shop List Styles ---
   container: { flex: 1, backgroundColor: "#fff" },
