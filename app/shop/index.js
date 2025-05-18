@@ -10,7 +10,6 @@ import {
   ScrollView,
   Dimensions,
   Pressable,
-  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
@@ -41,13 +40,13 @@ const PRODUCTS = [
   },
   {
     id: "3",
-    name: "Монгол гутал",
+    name: "Эмэгтэй цамц",
     price: 129000,
-    sizes: ["37", "38", "39", "40", "41", "42"],
+    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
     colors: ["#000", "#392f54"],
-    image: require("../../assets/mongolgutal.jpg"),
-    description: "Гар аргаар урласан, жинхэнэ арьсан монгол гутал.",
-    category: "boots",
+    image: require("../../assets/emegteitsamts.jpg"),
+    description: "Залгамал ханцуйтай, уядаг, өргөн ханцуйтай, нударга маягийн оруулгатай загварын цамц.",
+    category: "tsamts",
   },
   {
     id: "4",
@@ -127,26 +126,17 @@ export default function ShopScreen() {
 
   // Carousel auto-scroll functionality
   useEffect(() => {
-    let isMounted = true;
     const interval = setInterval(() => {
-      if (isMounted) {
-        const nextIndex = (activeIndex + 1) % CAROUSEL_IMAGES.length;
-        setActiveIndex(nextIndex);
-        if (carouselRef.current) {
-          carouselRef.current.scrollToIndex({
-            index: nextIndex,
-            animated: true,
-            viewPosition: 0,
-            viewOffset: 0,
-          });
-        }
+      const nextIndex = (activeIndex + 1) % CAROUSEL_IMAGES.length;
+      setActiveIndex(nextIndex);
+      if (carouselRef.current) {
+        carouselRef.current.scrollToIndex({
+          index: nextIndex,
+          animated: true,
+        });
       }
     }, 3000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [activeIndex]);
 
   const handleCarouselScroll = (event) => {
@@ -169,199 +159,196 @@ export default function ShopScreen() {
 
   // --- Product Detail Figma UI ---
   const ProductDetail = ({ product }) => (
-    <View style={{ flex: 1 }}>
-      <TouchableOpacity
-        style={styles.detailFloatingBackBtn}
-        onPress={() => setShowProductDetail(false)}
-      >
-        <Ionicons name="arrow-back" size={24} color="#000" />
-      </TouchableOpacity>
-
-      <ScrollView style={styles.detailContainer}>
-        <Image source={product.image} style={styles.detailImage} />
-        <View style={styles.detailInfo}>
-          <View style={styles.detailRowBetween}>
-            <Text style={styles.detailName}>{product.name}</Text>
-            <TouchableOpacity onPress={() => setFavorite((f) => !f)}>
-              <AntDesign
-                name={favorite ? "heart" : "hearto"}
-                size={28}
-                color={favorite ? "#D32F2F" : "#bbb"}
-              />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.detailPrice}>
-            ₮{product.price.toLocaleString()}
-          </Text>
-          <Text style={styles.detailDesc}>{product.description}</Text>
-
-          <Text style={styles.detailSectionTitle}>Үзүүлэлтүүд</Text>
-          <Text style={styles.detailSubTitle}>Материал</Text>
-          <View style={styles.detailRow}>
-            {MATERIALS.map((m) => (
-              <Pressable
-                key={m}
-                style={[
-                  styles.detailChip,
-                  material === m && styles.detailChipSelected,
-                ]}
-                onPress={() => setMaterial(m)}
-              >
-                <Text
-                  style={
-                    material === m
-                      ? styles.detailChipTextSelected
-                      : styles.detailChipText
-                  }
-                >
-                  {m}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-          <Text style={styles.detailSubTitle}>Үндэстэн</Text>
-          <View style={styles.detailRow}>
-            {ETHNICITIES.map((e) => (
-              <Pressable
-                key={e}
-                style={[
-                  styles.detailChip,
-                  ethnicity === e && styles.detailChipSelected,
-                ]}
-                onPress={() => setEthnicity(e)}
-              >
-                <Text
-                  style={
-                    ethnicity === e
-                      ? styles.detailChipTextSelected
-                      : styles.detailChipText
-                  }
-                >
-                  {e}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-          <Text style={styles.detailSubTitle}>Хэмжээ</Text>
-          <View style={styles.detailRow}>
-            {SIZES.map((s) => (
-              <Pressable
-                key={s}
-                style={[
-                  styles.detailSizeBtn,
-                  size === s && styles.detailSizeBtnSelected,
-                ]}
-                onPress={() => setSize(s)}
-              >
-                <Text
-                  style={
-                    size === s
-                      ? styles.detailSizeTextSelected
-                      : styles.detailSizeText
-                  }
-                >
-                  {s}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-          <Text style={styles.detailSubTitle}>Өнгө</Text>
-          <View style={styles.detailRow}>
-            {COLORS.map((c) => (
-              <Pressable
-                key={c.code}
-                style={[
-                  styles.detailColorCircle,
-                  color === c.code && styles.detailColorCircleSelected,
-                  { backgroundColor: c.code },
-                ]}
-                onPress={() => setColor(c.code)}
-              />
-            ))}
-          </View>
-          <Text style={styles.detailSectionTitle}>Үнэлгээ & Сэтгэгдэл</Text>
-          <View style={styles.detailRow}>
-            {[1, 2, 3, 4, 5].map((i) => (
-              <TouchableOpacity key={i} onPress={() => setRating(i)}>
-                <AntDesign
-                  name={i <= rating ? "star" : "staro"}
-                  size={28}
-                  color="#ECA61B"
-                  style={{ marginRight: 4 }}
-                />
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.detailReviewContainer}>
-            <Image source={review.user.avatar} style={styles.detailAvatar} />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.detailReviewerName}>{review.user.name}</Text>
-              <View style={styles.detailRow}>
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <AntDesign
-                    key={i}
-                    name={i <= review.rating ? "star" : "staro"}
-                    size={18}
-                    color="#ECA61B"
-                  />
-                ))}
-              </View>
-              <Text style={styles.detailReviewText}>{review.comment}</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.detailAllReviewsBtn}>
-            <Text style={styles.detailAllReviewsText}>
-              Бүх сэтгэгдлийг үзэх
-            </Text>
+    <ScrollView style={styles.detailContainer}>
+      <Image source={product.image} style={styles.detailImage} />
+      <View style={styles.detailInfo}>
+        <View style={styles.detailRowBetween}>
+          <Text style={styles.detailName}>{product.name}</Text>
+          <TouchableOpacity onPress={() => setFavorite((f) => !f)}>
+            <AntDesign
+              name={favorite ? "heart" : "hearto"}
+              size={28}
+              color={favorite ? "#D32F2F" : "#bbb"}
+            />
           </TouchableOpacity>
-          <Text style={styles.detailSectionTitle}>Төстэй бараанууд</Text>
-          <FlatList
-            data={SIMILAR_PRODUCTS}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.detailSimilarProduct}
-                onPress={() => openProductDetail(item)}
-              >
-                <Image source={item.image} style={styles.detailSimilarImage} />
-              </TouchableOpacity>
-            )}
-          />
-          <View style={styles.detailBottomButtons}>
-            <TouchableOpacity
-              style={[styles.detailGradientBtn, { flex: 1 }]}
-              onPress={() => {
-                /* Add to cart logic */
-              }}
+        </View>
+        <Text style={styles.detailPrice}>
+          ₮{product.price.toLocaleString()}
+        </Text>
+        <Text style={styles.detailDesc}>{product.description}</Text>
+
+        <Text style={styles.detailSectionTitle}>Үзүүлэлтүүд</Text>
+        <Text style={styles.detailSubTitle}>Материал</Text>
+        <View style={styles.detailRow}>
+          {MATERIALS.map((m) => (
+            <Pressable
+              key={m}
+              style={[
+                styles.detailChip,
+                material === m && styles.detailChipSelected,
+              ]}
+              onPress={() => setMaterial(m)}
             >
-              <LinearGradient
-                colors={["#ECA61B", "#D32F2F"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.detailGradient}
+              <Text
+                style={
+                  material === m
+                    ? styles.detailChipTextSelected
+                    : styles.detailChipText
+                }
               >
-                <Text style={styles.detailGradientBtnText}>Сагсанд нэмэх</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.detailGradientBtn, { flex: 1.2 }]}
-              onPress={() => router.push("/shop/checkout")}
+                {m}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={styles.detailSubTitle}>Үндэстэн</Text>
+        <View style={styles.detailRow}>
+          {ETHNICITIES.map((e) => (
+            <Pressable
+              key={e}
+              style={[
+                styles.detailChip,
+                ethnicity === e && styles.detailChipSelected,
+              ]}
+              onPress={() => setEthnicity(e)}
             >
-              <LinearGradient
-                colors={["#ECA61B", "#D32F2F"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.detailGradient}
+              <Text
+                style={
+                  ethnicity === e
+                    ? styles.detailChipTextSelected
+                    : styles.detailChipText
+                }
               >
-                <Text style={styles.detailGradientBtnText}>Худалдаж авах</Text>
-              </LinearGradient>
+                {e}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={styles.detailSubTitle}>Хэмжээ</Text>
+        <View style={styles.detailRow}>
+          {SIZES.map((s) => (
+            <Pressable
+              key={s}
+              style={[
+                styles.detailSizeBtn,
+                size === s && styles.detailSizeBtnSelected,
+              ]}
+              onPress={() => setSize(s)}
+            >
+              <Text
+                style={
+                  size === s
+                    ? styles.detailSizeTextSelected
+                    : styles.detailSizeText
+                }
+              >
+                {s}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={styles.detailSubTitle}>Өнгө</Text>
+        <View style={styles.detailRow}>
+          {COLORS.map((c) => (
+            <Pressable
+              key={c.code}
+              style={[
+                styles.detailColorCircle,
+                color === c.code && styles.detailColorCircleSelected,
+                { backgroundColor: c.code },
+              ]}
+              onPress={() => setColor(c.code)}
+            />
+          ))}
+        </View>
+        <Text style={styles.detailSectionTitle}>Үнэлгээ & Сэтгэгдэл</Text>
+        <View style={styles.detailRow}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <TouchableOpacity key={i} onPress={() => setRating(i)}>
+              <AntDesign
+                name={i <= rating ? "star" : "staro"}
+                size={28}
+                color="#ECA61B"
+                style={{ marginRight: 4 }}
+              />
             </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.detailReviewContainer}>
+          <Image source={review.user.avatar} style={styles.detailAvatar} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.detailReviewerName}>{review.user.name}</Text>
+            <View style={styles.detailRow}>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <AntDesign
+                  key={i}
+                  name={i <= review.rating ? "star" : "staro"}
+                  size={18}
+                  color="#ECA61B"
+                />
+              ))}
+            </View>
+            <Text style={styles.detailReviewText}>{review.comment}</Text>
           </View>
         </View>
-      </ScrollView>
-    </View>
+        <TouchableOpacity style={styles.detailAllReviewsBtn}>
+          <Text style={styles.detailAllReviewsText}>Бүх сэтгэгдлийг үзэх</Text>
+        </TouchableOpacity>
+        <Text style={styles.detailSectionTitle}>Төстэй бараанууд</Text>
+        <FlatList
+          data={SIMILAR_PRODUCTS}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.detailSimilarProduct}
+              onPress={() => openProductDetail(item)}
+            >
+              <Image source={item.image} style={styles.detailSimilarImage} />
+            </TouchableOpacity>
+          )}
+        />
+        <View style={styles.detailBottomButtons}>
+          <TouchableOpacity
+            style={styles.detailGradientBtn}
+            onPress={() => {
+              /* Add to cart logic */
+            }}
+          >
+            <LinearGradient
+              colors={["#ECA61B", "#D32F2F"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.detailGradient}
+            >
+              <Text style={styles.detailGradientBtnText}>Сагсанд нэмэх</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.detailGradientBtn}
+            onPress={() => router.push("/shop/checkout")}
+          >
+            <LinearGradient
+              colors={["#ECA61B", "#D32F2F"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.detailGradient}
+            >
+              <Text style={styles.detailGradientBtnText}>
+                Шууд худалдаж авах
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={styles.detailBackBtn}
+          onPress={() => setShowProductDetail(false)}
+        >
+          <Text style={styles.detailBackBtnText}>← Буцах</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 
   // --- Main ShopScreen Render ---
@@ -402,8 +389,6 @@ export default function ShopScreen() {
         source={item.image}
         style={styles.carouselImage}
         resizeMode="cover"
-        loading="lazy"
-        progressiveRenderingEnabled={true}
       />
       <LinearGradient
         colors={["transparent", "rgba(0,0,0,0.8)"]}
@@ -477,13 +462,6 @@ export default function ShopScreen() {
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        bounces={false}
-        overScrollMode="never"
-        maintainVisibleContentPosition={{
-          minIndexForVisible: 0,
-          autoscrollToTopThreshold: 10,
-        }}
-        contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Carousel Section */}
         <View style={styles.carouselContainer}>
@@ -500,16 +478,6 @@ export default function ShopScreen() {
             snapToAlignment="center"
             snapToInterval={windowWidth}
             bounces={false}
-            overScrollMode="never"
-            removeClippedSubviews={true}
-            initialNumToRender={1}
-            maxToRenderPerBatch={1}
-            windowSize={2}
-            getItemLayout={(data, index) => ({
-              length: windowWidth,
-              offset: windowWidth * index,
-              index,
-            })}
           />
 
           <View style={styles.paginationContainer}>
@@ -543,8 +511,6 @@ export default function ShopScreen() {
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.horizontalProductsContainer}
-            bounces={false}
-            overScrollMode="never"
           />
         </View>
 
@@ -558,8 +524,6 @@ export default function ShopScreen() {
             numColumns={2}
             scrollEnabled={false}
             contentContainerStyle={styles.productsContainer}
-            bounces={false}
-            overScrollMode="never"
           />
         </View>
       </ScrollView>
@@ -569,6 +533,7 @@ export default function ShopScreen() {
   );
 }
 
+// ...existing styles...
 const styles = StyleSheet.create({
   // --- Main Shop List Styles ---
   container: { flex: 1, backgroundColor: "#fff" },
@@ -838,61 +803,34 @@ const styles = StyleSheet.create({
   detailSimilarImage: { width: "100%", height: "100%", resizeMode: "cover" },
   detailBottomButtons: {
     flexDirection: "row",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "white",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingBottom: Platform.OS === "ios" ? 30 : 12,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: -3,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 10,
+    justifyContent: "space-between",
+    marginTop: 32,
+    marginBottom: 24,
   },
   detailGradientBtn: {
-    marginHorizontal: 6,
-    borderRadius: 12,
+    flex: 1,
+    marginHorizontal: 4,
+    borderRadius: 8,
     overflow: "hidden",
-    minHeight: 50,
   },
   detailGradient: {
-    flex: 1,
     paddingVertical: 16,
     alignItems: "center",
-    justifyContent: "center",
+    borderRadius: 8,
   },
   detailGradientBtnText: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 15,
-    letterSpacing: 0.5,
+    fontSize: 16,
+    letterSpacing: 1,
   },
-  detailFloatingBackBtn: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? 50 : 20,
-    left: 20,
-    zIndex: 100,
-    width: 40,
-    height: 40,
+  detailBackBtn: {
+    marginTop: 10,
+    alignSelf: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 24,
     borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    backgroundColor: "#F5F5F5",
   },
+  detailBackBtnText: { color: "#ECA61B", fontWeight: "bold", fontSize: 16 },
 });
