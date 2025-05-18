@@ -117,7 +117,7 @@ export default function ShopScreen() {
   // Dummy review
   const review = {
     user: {
-      name: "Анужин",
+      name: "Өсөхбаяр",
       avatar: require("../../assets/avatar.png"),
     },
     rating: 4,
@@ -172,11 +172,13 @@ export default function ShopScreen() {
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.detailPrice}>₮{product.price.toLocaleString()}</Text>
+        <Text style={styles.detailPrice}>
+          ₮{product.price.toLocaleString()}
+        </Text>
         <Text style={styles.detailDesc}>{product.description}</Text>
 
         <Text style={styles.detailSectionTitle}>Үзүүлэлтүүд</Text>
-        <Text style={styles.detailSubTitle}>Material</Text>
+        <Text style={styles.detailSubTitle}>Материал</Text>
         <View style={styles.detailRow}>
           {MATERIALS.map((m) => (
             <Pressable
@@ -187,7 +189,13 @@ export default function ShopScreen() {
               ]}
               onPress={() => setMaterial(m)}
             >
-              <Text style={material === m ? styles.detailChipTextSelected : styles.detailChipText}>
+              <Text
+                style={
+                  material === m
+                    ? styles.detailChipTextSelected
+                    : styles.detailChipText
+                }
+              >
                 {m}
               </Text>
             </Pressable>
@@ -204,13 +212,19 @@ export default function ShopScreen() {
               ]}
               onPress={() => setEthnicity(e)}
             >
-              <Text style={ethnicity === e ? styles.detailChipTextSelected : styles.detailChipText}>
+              <Text
+                style={
+                  ethnicity === e
+                    ? styles.detailChipTextSelected
+                    : styles.detailChipText
+                }
+              >
                 {e}
               </Text>
             </Pressable>
           ))}
         </View>
-        <Text style={styles.detailSubTitle}>Size</Text>
+        <Text style={styles.detailSubTitle}>Хэмжээ</Text>
         <View style={styles.detailRow}>
           {SIZES.map((s) => (
             <Pressable
@@ -221,13 +235,19 @@ export default function ShopScreen() {
               ]}
               onPress={() => setSize(s)}
             >
-              <Text style={size === s ? styles.detailSizeTextSelected : styles.detailSizeText}>
+              <Text
+                style={
+                  size === s
+                    ? styles.detailSizeTextSelected
+                    : styles.detailSizeText
+                }
+              >
                 {s}
               </Text>
             </Pressable>
           ))}
         </View>
-        <Text style={styles.detailSubTitle}>Color</Text>
+        <Text style={styles.detailSubTitle}>Өнгө</Text>
         <View style={styles.detailRow}>
           {COLORS.map((c) => (
             <Pressable
@@ -292,7 +312,9 @@ export default function ShopScreen() {
         <View style={styles.detailBottomButtons}>
           <TouchableOpacity
             style={styles.detailGradientBtn}
-            onPress={() => {/* Add to cart logic */}}
+            onPress={() => {
+              /* Add to cart logic */
+            }}
           >
             <LinearGradient
               colors={["#ECA61B", "#D32F2F"]}
@@ -313,7 +335,9 @@ export default function ShopScreen() {
               end={{ x: 1, y: 0 }}
               style={styles.detailGradient}
             >
-              <Text style={styles.detailGradientBtnText}>Шууд худалдаж авах</Text>
+              <Text style={styles.detailGradientBtnText}>
+                Шууд худалдаж авах
+              </Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -709,7 +733,12 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 8,
   },
-  detailSubTitle: { fontSize: 15, fontWeight: "600", marginBottom: 8, color: "#888" },
+  detailSubTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    marginBottom: 8,
+    color: "#888",
+  },
   detailChip: {
     borderWidth: 1,
     borderColor: "#ECA61B",
@@ -784,7 +813,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: "hidden",
   },
-  detailGradient: { paddingVertical: 16, alignItems: "center", borderRadius: 8 },
+  detailGradient: {
+    paddingVertical: 16,
+    alignItems: "center",
+    borderRadius: 8,
+  },
   detailGradientBtnText: {
     color: "#fff",
     fontWeight: "bold",
